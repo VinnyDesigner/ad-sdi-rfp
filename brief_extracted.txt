@@ -1,0 +1,572 @@
+AD-SDI Portal — UI Design Brief for Designer
+Department of Government Enablement (DGE) · Spatial Data Strategy Implementation · 16 October 2026
+1. The job
+Design 15 premium, high-fidelity desktop screens for the AD-SDI Portal — Abu Dhabi’s government geospatial data platform, owned by the Department of Government Enablement (DGE). Each screen is a single, fixed-size frame that will be captured as an image and printed on an A4 page.
+1.1 What you deliver
+A Figma file (or equivalent) with a shared design system and 15 screens, plus 3 Arabic versions.
+A view link where each screen opens at exact frame size, one screen per frame.
+PNG exports of every frame at 2x. These are sharper than screenshots and are preferred.
+1.2 Frame size — the most important rule
+Every screen must fit one fixed frame with no scrolling. Nothing may continue below the frame edge.
+Screen type
+Frame size
+Export @2x
+Why
+All screens (S00–S14)
+1440 × 1018 px
+2880 × 2036 px
+Exact A4 landscape ratio (1 : 1.414). Fills an A4 landscape page, or sits cleanly at full width on an A4 portrait page
+No long landing pages. If content does not fit, cut content — never extend the frame.
+Keep a 24 px safe margin inside the frame edge free of important text, so cropping never cuts anything.
+Body text minimum 13 px, labels minimum 12 px. Screens are printed at about 25 cm wide, so smaller text becomes unreadable.
+Avoid ultra-thin 1px light-grey text. It disappears in print.
+1.3 How the screens will be captured
+The screens will be opened from your link and captured. To make that clean:
+In the view link, set every frame to open at 100% with no browser chrome, no Figma toolbars, no comments, no cursor.
+Name each frame exactly as in the screen list (e.g. S01 Home), so frames are easy to find.
+Also send the 2x PNG pack named S01_Home_EN.png, S01_Home_AR.png, etc.
+1.4 Sample data note
+Place this micro-line at the bottom-right of every screen, 11 px, 60% opacity: “Illustrative data — conceptual design”.
+2. Visual direction — what “premium” means here
+The target feel is calm, precise, sovereign: a world-class government data platform, not a startup dashboard. Premium comes from restraint, consistency and detail — not from effects.
+2.1 Mood in three words
+Trusted · Intelligent · Sovereign. Deep navy authority, a single warm gold accent, generous white space, real Abu Dhabi geography.
+2.2 Reference quality bar (for feel only — do not copy)
+Stripe and Linear dashboards — hierarchy, spacing, tabular numbers, quiet colour.
+Apple Maps and Mapbox Studio — clean basemaps, elegant map overlays.
+Palantir / Bloomberg-style command views — dense information that still reads at a glance (dark screens only).
+Leading government portals (e.g. UK GOV.UK, Singapore OneMap) — clarity and accessibility.
+2.3 Premium techniques to use
+One accent colour. Gold appears in at most 3–4 places per screen: active nav marker, one key highlight, focus ring, one chart emphasis.
+Layered depth, not heavy shadows. Hairline 1px borders plus a very soft shadow; floating map panels get a second, softer elevation.
+Tabular numbers. All KPI and table figures use tabular figures, right-aligned, with units in smaller grey text.
+Hero imagery with purpose. Aerial or 3D views of Abu Dhabi, darkened with a navy gradient, overlaid by subtle cartographic contour lines at 6–8% opacity.
+Micro-details. Status dots with a soft halo ring, sparklines inside KPI cards, small “Updated 09:30 GST” stamps, keyboard hint chips (⌘K), skeleton-free final states.
+Consistent rhythm. 8 px spacing grid; identical card padding (24 px) and radii everywhere.
+Real content. Real place names, plausible numbers, proper Arabic. No lorem ipsum ever.
+Dark mode for the two “wow” screens — Digital Twin (S10) and Command Centre (S11) — to create contrast in the set.
+2.4 Avoid
+Neon gradients, rainbow charts, heavy drop shadows, 3D clip-art, stock-photo people, emoji.
+More than one icon style or more than two typefaces.
+Crowding. If a screen feels busy, remove a card — don’t shrink text.
+Google or Apple map styling or logos. Any copyrighted characters or brands.
+3. Brand, logos, colour and typography
+3.1 Logos
+DGE logo (Abu Dhabi emblem + Arabic and English “Department of Government Enablement” wordmark). Source: the client’s RFP cover page or dge.gov.ae. Use the full-colour version on light backgrounds and an all-white version on navy/dark backgrounds.
+Never redraw, recolour, stretch, rotate, crop or add effects to the DGE logo. Clear space around it = height of the emblem.
+Product wordmark: “AD-SDI Portal” in Inter 600, with a thin divider line between it and the DGE logo. Optional small subtitle: “National Geospatial Data Clearinghouse”.
+No other company logos inside any screen (no IST, Esri, cloud vendor or partner logos).
+Logo sizes: top bar 36–40 px tall; login screen 48–56 px tall.
+3.2 Colour palette
+Accent values are sampled from DGE documents. If DGE brand guidelines are supplied later, they replace these.
+Token
+Hex
+Use
+Navy 900
+#0B2545
+Top bar, primary headings, dark panels
+Navy 700
+#13315C
+Hover on navy, secondary dark surfaces
+Gold 500 (accent)
+#FFC20E
+Active nav marker, key highlight, focus ring. Max ~5% of any screen
+Steel 400
+#7A9CC6
+Section labels, secondary icons, chart axes accents
+Blue 600 (action)
+#1F5FAD
+Primary buttons, links, selected rows
+Canvas
+#F5F7FA
+Page background (light screens)
+Surface
+#FFFFFF
+Cards, panels, tables
+Border
+#E3E8EF
+Card borders, dividers
+Text primary
+#14213D
+Body text
+Text secondary
+#5B6B7F
+Labels, metadata, captions
+Success
+#1E9E6A
+Healthy, passed, active
+Warning
+#E8A317
+At risk, pending
+Danger
+#D64545
+Rejected, denied (use rarely)
+Info
+#2F80ED
+Notices
+Dark background
+#0A1628
+S10 and S11 background
+Dark surface
+#13233D
+Panels on dark screens (92% opacity over maps)
+Six module colours — use identically everywhere (chips, chart series, roadmap lanes, card top borders):
+Module
+Hex
+A · Clearinghouse & Portal
+#1F5FAD
+B · GeoAI
+#7B4FD6
+C · Marketplace
+#0E9F8E
+D · Capacity Building
+#E07B24
+E · Digital Twin
+#2BA6DE
+F · Open Data
+#5DAA3A
+3.3 Typography
+English: Inter (fallback Segoe UI). Arabic: IBM Plex Sans Arabic (fallback Noto Kufi Arabic). Code: JetBrains Mono.
+Turn on tabular figures for all numbers.
+Style
+Size / weight / line height
+Use
+Display
+40 / 600 / 48
+Login and Home hero headline only
+H1
+26 / 600 / 32
+Page titles
+H2
+20 / 600 / 28
+Section titles, panel titles
+H3
+16 / 600 / 24
+Card titles
+Body
+14 / 400 / 22
+Default text
+Small
+13 / 400 / 20
+Table cells, metadata
+Label
+12 / 500 / 16, uppercase, +4% tracking
+Table headers, nav group labels
+KPI
+30 / 600 / 36
+KPI values
+Micro
+11 / 500 / 14
+Footnotes, stamps only
+Arabic: same sizes, line height +15%.
+4. Frame, grid and navigation
+Two shells cover all screens: a Public shell (S01, S02, S13) and a Workspace shell (S03–S12, S14). S00 Login has its own layout. Desktop screens only — no mobile screens.
+4.1 Grid and spacing
+Frame 1440 × 1018. Spacing on an 8 px scale: 4, 8, 12, 16, 24, 32, 48.
+Workspace content area: 1440 − 240 (side nav) = 1200 px wide; 32 px padding left/right → 1136 px usable; 12 columns, 24 px gutters.
+Public content area: max 1200 px centred, 12 columns, 24 px gutters.
+Vertical budget (workspace): top bar 64 · page header 88 · content 842 · bottom stamp line 24. Plan cards to fit this.
+Radii: 8 px inputs, buttons, cards · 12 px floating panels, modals · full pill for chips and badges.
+Elevation: Level 1 cards = 1px #E3E8EF border + shadow 0 1 2 rgba(16,24,40,0.06). Level 2 floating = shadow 0 12 32 rgba(16,24,40,0.14).
+4.2 Top bar — Workspace shell (64 px, Navy 900)
+Left to right:
+DGE logo, white version, 36 px tall.
+1px vertical divider, white 20% opacity, 28 px tall.
+Wordmark “AD-SDI Portal”, Inter 16/600, white.
+Global search field, 480 px wide, 40 px tall, navy-700 fill, placeholder “Search datasets, services, maps, models…”, search icon left, “⌘K” chip right.
+Right group, 16 px apart: Help icon · Notifications bell with gold count badge “3” · Language toggle “EN | ع” (active one bold) · User block: 32 px avatar (initials), name “Fatima A.” and role line “DMT · Data Steward” in Micro, chevron.
+4.3 Side navigation pane — Workspace shell (240 px wide, white)
+Right border 1px #E3E8EF. Top padding 24 px.
+Nav items 40 px tall, icon 20 px + label 14/500, 12 px gap, 16 px left padding.
+Group labels in Label style, Steel 400, 24 px above each group.
+Group
+Items (icon suggestion)
+DISCOVER
+Catalogue (magnifying glass) · Map Viewer (map) · Marketplace (storefront)
+BUILD
+GeoAI Studio (sparkle/brain) · Digital Twin (cube) · APIs & Services (plugs)
+GOVERN
+Publishing & Approvals (check-square) · Quality & SLA (pulse) · Security & Access (shield) · Policies & Standards (book)
+ENABLE
+GeoMaturity & Training (graduation cap)
+PROGRAMME
+Command Centre (gauge)
+Active item: 3 px Gold 500 bar on the left edge, label bold Navy 900, background #EEF3FA, icon Blue 600.
+Hover: background #F5F7FA.
+Bottom of pane: environment pill “● Production · UAE hosting” (green dot), then version “v2.3” in Micro, then “Collapse ‹” link.
+Collapsed state (72 px): icons only with tooltip. Use it on S10 Digital Twin and S07 GeoAI Assistant to give the map more room.
+Dark screens (S10, S11): pane uses Dark surface #13233D, labels white 70%, active background white 8%.
+4.4 Page header (Workspace)
+Breadcrumb (Small, Text secondary): e.g. “Catalogue / Land & Cadastre / Land Parcels”.
+H1 title + one-line description underneath.
+Right side: page actions (max 1 primary + 2 secondary buttons).
+Optional tabs row directly below, 44 px, active tab with 2 px Blue 600 underline.
+4.5 Top bar — Public shell (72 px, white, bottom border)
+Left: DGE logo full colour 40 px + divider + “AD-SDI Portal”.
+Centre nav (14/500): Data · Maps · Services · Marketplace · Open Data · Developers. Active link has 2 px gold underline.
+Right: search icon · “EN | ع” · “Sign in” secondary button (outline, Navy).
+4.6 Footer — Public shell
+On single-frame public screens, use a slim footer bar only (48 px, Navy 900): “© Department of Government Enablement” left; links right: Privacy · Terms · Accessibility · Open Data Licence · Contact. No tall multi-column footer — it wastes frame space.
+5. Components, icons, imagery, maps and charts
+Build these once as a component library page before designing screens. Every screen is assembled from them.
+5.1 Core components
+Component
+Spec
+Button
+Heights 32 / 40 / 48. Primary: Blue 600 fill, white text. Secondary: white, 1px Border, Navy text. Ghost: text only. Destructive: Danger outline. States: default, hover (8% darker), pressed, disabled (40% opacity), focus (2px gold ring + 2px offset)
+Input / select
+40 px, 8 px radius, 1px Border, label above in Small 500. Focus: Blue 600 border + soft blue glow
+Hero search
+56 px tall, 12 px radius, white, Level 2 shadow; scope dropdown left, primary “Search” button right
+KPI card
+24 px padding. Label (Small, secondary) → value (KPI style) + unit → small delta chip (▲ +1.2) → 32 px sparkline → target marker line dashed, labelled “Agreed target”
+Data table
+Header 40 px, Label style, #F5F7FA background. Rows 48 px, Small text, hover #F9FBFD, selected row 3px Blue 600 left bar. Numbers right-aligned
+Status pill
+Pill, 22 px tall, 12/500, tinted background (12% of colour) + dot + text. Never colour only
+Classification badge
+Open (Success) · Shared – Government (Info) · Restricted (Warning) · Confidential (Danger). Solid tint with lock icon on Restricted/Confidential
+Audience chip
+Outline pill, Navy text: Internal · Marketplace · Open. Always placed right of the classification badge
+Module chip
+Small pill with module colour dot + letter + name, e.g. “● B · GeoAI”
+Stage tracker
+Horizontal steps: done (filled check), current (gold ring), pending (grey outline), rejected (red x). Labels under each step
+Tabs
+44 px, Body 500, active: Navy text + 2px Blue 600 underline
+Toast
+Bottom-right, Navy 900, white text, check icon, 12 px radius
+Tooltip
+Navy 900, white Small text, 8 px radius, small arrow
+Drawer
+Right side, 480 px, Level 2 shadow, header with title + close
+Avatar
+Initials only, never photos. 32 px circle, Steel 400 background
+5.2 Icons
+One family only: Phosphor Icons, Regular weight (fallback: Material Symbols Rounded). 20 px in UI, 24 px in nav, 1.5 px stroke look.
+Icon colour: Text secondary by default; Blue 600 when active; white on navy.
+5.3 Imagery
+Only licensed or self-made images. Preferred: aerial/satellite views or 3D renders of Abu Dhabi coastline, skyline at dusk, mangroves, road networks.
+Treatment: navy gradient overlay (left 90% → right 10%), plus a cartographic contour-line pattern at 6–8% white.
+No stock photos of people.
+5.4 Maps
+Light screens: very light grey vector basemap (warm grey water #DCE3EA, land #F4F5F7, roads white, labels Text secondary).
+Dark screens: dark basemap (land #101C2E, water #0A1424, roads #1E2E47, labels white 50%).
+Real geography: Abu Dhabi Island, Saadiyat, Yas, Al Maryah, Khalifa City, Mussafah, Al Ain, Al Dhafra.
+Data layers: 30–40% fill + 1.5 px stroke in module or status colour; max 4 layers visible.
+Always include: zoom +/−, home, layer button, scale bar, north arrow, coordinate readout bottom-left (“24.4539° N, 54.3773° E”), small attribution “Basemap: AD-SDI”.
+Map control buttons: 36 px white squares, 8 px radius, Level 1 shadow, stacked with 1px separators.
+5.5 Charts
+Gridlines very light (#EEF1F5), no chart borders, axis labels Small secondary.
+Line charts 2 px, with soft area fill 8%. Target lines dashed, labelled “Agreed target”.
+Use module colours for series; status colours only for status.
+Donuts: 16 px ring, centre total in KPI style.
+Every chart has a title (H3) and a small “Last 30 days ▾” selector at top-right.
+6. Screen list and flow
+Fifteen screens in this order. Design S00, S01 and S11 first — they set the light, public and dark directions — and share them for review before the rest.
+ID
+Screen
+Shell / theme
+Priority
+S00
+Login
+Own layout, light
+Must
+S01
+Home
+Public, light
+Must
+S02
+Catalogue Search + Map
+Public, light
+Must
+S03
+Dataset Detail
+Workspace, light
+Must
+S04
+Publishing & Approvals
+Workspace, light
+Must
+S05
+Quality & SLA Dashboard
+Workspace, light
+Must
+S06
+GeoAI Studio — Change Detection
+Workspace, light
+Must
+S07
+GeoAI Assistant (chat + map)
+Workspace (collapsed nav), light
+Nice
+S08
+Marketplace Catalogue
+Workspace, light
+Must
+S09
+Marketplace Request & Entitlements (3 frames: S09a, S09b, S09c)
+Workspace, light
+Nice
+S10
+Digital Twin 3D
+Workspace (collapsed nav), dark
+Must
+S11
+Programme Command Centre
+Workspace, dark
+Must
+S12
+GeoMaturity & Training
+Workspace, light
+Must
+S13
+Open Data Portal
+Public, light
+Must
+S14
+Security & Access Console
+Workspace, light
+Must
+Arabic versions: S00, S01, S13 (and S07 if done).
+Click-through flow for the prototype link:
+S00 Login → “Government account” → S01 Home.
+S01 search → S02 results → click a result → S03 Dataset Detail.
+Side nav links each workspace screen (S04–S12, S14).
+S08 “Request access” → S09.
+S01 “Open Data” nav → S13.
+7. Screen specs — part 1
+Each spec lists the layout zones with sizes, every element top-to-bottom, the sample content, the state to show, and the premium touches. Pixel values assume the 1440 × 1018 frame.
+S00 — Login
+Layout: two panels, no top bar. Left image panel 820 px wide · right sign-in panel 620 px wide, white.
+Left panel (820 × 1018):
+Full-bleed aerial image of Abu Dhabi coastline at dusk. Navy gradient overlay (left 92% → right 55%). Contour-line pattern at 7% white over the whole panel.
+Top-left (48 px from edges): DGE logo, white version, 48 px tall.
+Middle-left, max width 560: Display headline, white — “Abu Dhabi’s spatial data. Trusted. Connected.” Under it, Body 16, white 80% — “One secure platform to discover, share and use authoritative geospatial data across government.”
+Below, 32 px gap: a thin gold line 48 px wide.
+Bottom-left: three trust items in a row, each = 20 px white icon + Small white text: “UAE data residency” (shield) · “Role-based secure access” (lock) · “English | العربية” (globe).
+Right panel (620 × 1018), content column 400 px centred:
+Top-right corner: language toggle “EN | ع”.
+Wordmark “AD-SDI Portal” (H2) with small module-colour bar of 6 segments under it (the six module colours, 4 px tall, 120 px wide) — a subtle signature.
+H1 “Sign in” + Body secondary “Access the Abu Dhabi Spatial Data Infrastructure”.
+Primary button 48 px full width: building icon + “Continue with Government account (SSO)”.
+Secondary button 48 px full width: user icon + “Partner or public account”.
+Divider with centred text “or sign in with email”.
+Email field (filled: “fatima.a@dmt.gov.ae”) · Password field (masked, eye icon) · row: “Remember this device” checkbox left, “Forgot password?” link right.
+Primary “Sign in” button 48 px.
+Info line with shield icon, Small secondary: “Multi-factor authentication is required for privileged and partner accounts.”
+Bottom of panel: status chip “● All services operational” (green) left; links right: Help · Privacy · Accessibility.
+State: Password field focused (gold focus ring).
+Premium touches: perfect vertical centring of the form; 1px hairline between panels is not needed — the image edge is the divider; generous 32 px spacing between form groups.
+S01 — Home (public)
+Layout (top to bottom): public top bar 72 · hero 440 · stats strip overlapping hero · services grid · slim footer 48. Must end exactly at 1018.
+Hero (y 72–512, full width): aerial image of Abu Dhabi Island with navy gradient and contour pattern.
+Display headline, white: “Abu Dhabi’s spatial data, in one place”.
+Subline, white 80%: “Discover, access and share trusted geospatial data and services across government.”
+Hero search (720 px wide): scope dropdown “All ▾” (All · Datasets · Services · Maps · APIs · AI models), placeholder “Search 2,480 datasets, services and maps…”, primary “Search”.
+Under search, “Explore by theme” row of 8 glass chips (white 12% fill, white text, 16 px icon): Boundaries · Transport · Land & Cadastre · Buildings & 3D · Environment · Utilities · Imagery · Population.
+Stats strip (white card, 1000 × 96, centred, overlaps hero bottom by 40 px, Level 2 shadow): 4 items with vertical dividers — “2,480 Datasets” · “64 Contributing entities” · “1,150 OGC services” · “● All services operational” (green dot + link “Status”).
+Section title (32 px below): H2 “Platform services” + Small secondary “Six connected capabilities for government and partners”.
+Services grid: 3 × 2 cards, each ~389 × 132, Level 1, 3 px top border in module colour:
+40 px tinted icon square (module colour at 12%) · H3 title · 2-line Small description · “Open →” link bottom-right.
+Cards: Clearinghouse & Catalogue (A) · GeoAI Studio (B) · Data Marketplace (C) · Capacity Building & GeoMaturity (D) · Digital Twin (E) · Open Data (F).
+Slim footer (48 px, Navy 900).
+State: Hover on “GeoAI Studio” card (lift 2 px + Level 2 shadow + module-colour border).
+Premium touches: hero headline aligned to the same left edge as search and cards; chips feel like frosted glass; numbers in stats strip in KPI style.
+S02 — Catalogue Search + Map (public)
+Layout: public top bar 72 · search row · filter row · split view (list 520 px left, map right) · slim footer 48.
+Search row (y 96): search field 640 px with query “mangrove” + result count “38 results” (H3) to the right.
+Filter row: dropdown chips — Theme: Environment (active, blue fill) · Publisher · Classification: Open + Shared (active) · Audience · Format · Service type · Updated · “Draw area” (map icon). “Clear all” link at end.
+List column (520 px): top row: “Sort: Relevance ▾” left; view toggle List | Grid | Map; icon buttons “Save search” and “Create alert”.
+5 result cards, 120 px each: 72 px map thumbnail · title H3 · publisher (e.g. “EAD”) · 1-line description · badge row: classification badge + audience chip + “Quality passed” pill · format chips (OGC API, WMS, GeoJSON) · “Updated 3 Sep 2027” · bookmark icon.
+Titles: Mangrove Habitat Extent 2027 (EAD) · Coastal Protected Areas (EAD) · Mangrove Planting Sites (EAD) · Shoreline Change 2015–2027 (DMT) · Coastal Land Use (DMT).
+Map (right, to frame edge): coast from Abu Dhabi Island to Eastern Mangroves. All result footprints as thin outlines; hovered result filled Blue 600 at 35%. A dashed gold polygon shows the “Draw area” filter. Map controls top-right, legend bottom-left.
+State: card 2 hovered, its footprint highlighted on the map, tooltip with title over the footprint.
+S03 — Dataset Detail (workspace)
+Page header: breadcrumb “Catalogue / Land & Cadastre / Land Parcels” · H1 “Land Parcels (Cadastre)” · line “Custodian: DMT · Steward: Khalid M.” · badge row: “FGDS – Fundamental” (navy) · Shared – Government · audience chips Internal + Marketplace · “Quality passed” (green) · “Data currency: on schedule” (green). Actions right: “Add to map” (primary) · “Request access” · “Copy API URL” · ⋯.
+Tabs: Overview (active) · Metadata · Services & APIs · Quality · Lineage · Access · Versions · Audit trail.
+Left column (8 cols):
+Map preview card, 320 px tall: parcel polygons over Khalifa City in Blue 600 outlines, one parcel selected; “Open in Map Viewer” button top-right.
+Key facts card: 2-column grid of label/value pairs — CRS: WGS 84 / UTM 40N · Extent: Abu Dhabi Emirate · Features: 412,380 · Update frequency: Monthly · Last updated: 1 Sep 2027 · Next update: 1 Oct 2027 · Lifecycle: Active · Metadata: Complete.
+Lineage card, 160 px: left-to-right node chain with small icons — “DMT source system” → “Quality gateway” → “Classification & approval” → “AD-SDI Clearinghouse” → “Data Platform + 23 services”. Nodes are 8 px-radius pills, connectors 1.5 px Steel with arrowheads.
+Right column (4 cols):
+Services & APIs card: 5 rows — OGC API – Features · WMS · WFS · WMTS · REST. Each row: green dot, name, “p95 320 ms” Small secondary, copy icon.
+Quality card: 6 check rows with icons — Schema ✓ · Geometry ✓ · Topology ✓ (“3 warnings” amber text) · Attribute domains ✓ · Spatial reference ✓ · Metadata completeness ✓. Footer Micro: “Validated 1 Sep 2027”.
+Access card: lock icon · “You have access via Data Sharing Agreement DSA-2027-014” · Micro “Every access is logged”.
+State: toast bottom-right “API URL copied”.
+8. Screen specs — part 2
+S04 — Publishing & Approvals (workspace)
+Persona in top bar: “Khalid M. · DMT · Data Steward”. Side nav active: Publishing & Approvals.
+Page header: H1 “Publishing & Approvals” · description “Every dataset, service and product passes quality, classification and approval before release.” · Tabs: My queue (active, count 15) · Submitted by DMT · Published · Withdrawn.
+Flow tracker card (full width, 104 px): 6 connected stages with counts — Provider onboarding · Submitted 24 · Quality gateway 6 · Classification & audience 4 · Custodian approval 5 · Published (30 days) 132. “Custodian approval” is the current stage (gold ring). Connectors Steel 1.5 px.
+Queue table (8 cols, 7 rows): Item · Type (Dataset / Service / Product / Open release) · Entity · Target audience (chip) · Stage (stage pill) · Quality result (✓ / ⚠) · Waiting · Action (“Review” link). Row 3 “Bus Stops & Routes — v2027.09” selected.
+Detail panel (4 cols, full content height):
+Title “Bus Stops & Routes” + version chip + module chip “F · Open Data”.
+Quality checks: Schema ✓ · Geometry ✓ · Topology ⚠ 2 warnings · Attribute domains ✓ · Spatial reference ✓ · Metadata ✓.
+Classification: Open badge · Audience requested: Open chip · “Legal eligibility ✓”.
+Approval block: primary “Approve for publication” · secondary “Return with comments” · ghost danger “Reject”.
+Audit trail: 4 rows with time, user initials avatar, action (“Submitted”, “Gateway passed”, “Classified Open”, “Assigned to Khalid M.”).
+State: “Approve for publication” in hover.
+S05 — Quality & SLA Dashboard (workspace)
+Page header: H1 “Quality & SLA” · description “Automated monitoring of availability, data currency, quality and support.” · right: “Last 30 days ▾” · “All entities ▾” · secondary “Export report”.
+KPI row (5 cards, equal width):
+Platform availability 99.95%
+Data currency 94% — “of fundamental datasets updated on schedule”
+Data quality 96% — “of datasets passing the quality gateway”
+Support responsiveness 97% — “incidents resolved within SLA”
+Entity adoption 41 — “entities publishing or consuming”
+Each card: sparkline + dashed “Agreed target” marker (no number shown) + green status dot.
+Row 2: left 8 cols — line chart “Availability, last 90 days” with dashed “Agreed target” line and one annotation flag “Planned maintenance · 21 Aug”. Right 4 cols — donut “Quality gateway · last 24 h”: centre “186”, segments Passed 171 / Returned 15; below, top 3 reasons with counts: Spatial reference mismatch 6 · Metadata incomplete 5 · Topology errors 4.
+Row 3: left 7 cols — table “Entity compliance” (6 rows: DMT, EAD, SCAD, DoH, ADEK, ADPHC): Entity · Datasets · Currency % · Quality % · Open tickets · Trend sparkline · Status pill (5 green “On track”, 1 amber “At risk”). Right 5 cols — heat-map “Themes × quality checks”: 8 themes (rows) × 6 checks (columns), single-hue blue scale, legend strip below.
+State: tooltip on the availability chart: “14 Aug · 99.98%”.
+S06 — GeoAI Studio: Change Detection (workspace)
+Side nav: GeoAI Studio active. Page header compact: H1 “GeoAI Studio” + tabs: Change detection (active) · Feature extraction · Models · Use cases.
+Use-case strip (full width, 56 px): 5 connected pills — Candidate 12 → Scored 8 → Approved 5 → In development 3 → Production 2.
+Three-zone body: config panel 300 px · map (flex) · results panel 340 px. Model card strip 88 px along the bottom of the map + results.
+Config panel: Model “Building Change Detection v3.2” with green “Production” pill · Use case “New construction monitoring” · Area “Khalifa City – South-West” with Draw / Upload icons · Image T1 “Jan 2027 · 0.5 m” · Image T2 “Aug 2027 · 0.5 m” · Confidence slider at 0.80 · Min area 25 m² · primary “Run analysis” · status line “✓ Completed in 4 min 12 s”.
+Map: before/after swipe with a vertical handle (white 2 px line + round grip). Left half older imagery, right half newer. Polygons: New construction (#7B4FD6), Demolition (#E07B24), Extension (#0E9F8E). Legend bottom-left. One selected polygon with popup: “New building · Confidence 0.96 · 1,240 m² · Review: Pending”.
+Results panel: header “214 changes detected”; 3 count tiles: 168 New · 21 Demolished · 25 Extensions. Metrics row: Precision 0.93 · Recall 0.89 · F1 0.91 + green pill “Meets agreed threshold”. List of 5 detections (48 px thumbnails, type, confidence bar, review status pill). Buttons: primary “Send to review queue” · secondary “Publish” · ghost “Export”.
+Model card strip: Registry ID MR-B-007 · Owner “AD-SDI GeoAI team” · Trained on 14,200 labelled samples · Evaluated 30 Aug 2027 · Drift: Stable (green) · pills “Deployment approved” · “Human review required” · link “View model card”.
+Premium touch: the swipe map is the hero — make imagery crisp and realistic, polygons with a soft inner glow.
+S07 — GeoAI Assistant (workspace, collapsed nav)
+Layout: collapsed nav 72 · chat panel 480 · map (rest).
+Chat panel header: “GeoAI Assistant” H2 + pill “Approved model” + EN | ع toggle.
+User bubble (right-aligned, Navy 900, white text): “Show schools within 500 m of high-traffic roads in Al Ain and count them by district.”
+Assistant card (white, Level 1):
+Bold answer line: “47 schools in 9 districts are within 500 m of high-traffic roads.”
+Collapsible “How I got this” (expanded): 5 numbered steps — Understood request · Selected approved datasets · Buffered roads by 500 m · Intersected schools · Grouped by district.
+Source chips: Schools (ADEK) · Road Traffic (DMT) · Districts (DMT), each with a tiny classification dot.
+Mini table: District · Schools — 5 rows.
+Info note (blue tint): “1 restricted dataset was excluded based on your access.”
+Micro disclaimer: “AI-generated. Verify before official use.”
+Action row: Save as map · Export · thumbs-up / thumbs-down icons.
+Suggested prompts (chips above input): “Nearest health centres to Khalifa City” · “Which datasets show mangroves?”
+Input bar (bottom, 56 px): “Ask about places, data or trends…” + mic icon + send button.
+Map: Al Ain; roads in amber; 500 m buffers translucent amber; school points purple #7B4FD6; district outlines grey with labels.
+State: one source chip in hover with tooltip “Schools · ADEK · Updated Aug 2027”.
+9. Screen specs — part 3
+S08 — Marketplace Catalogue (workspace)
+Persona: “Omar R. · Approved partner” (partner account). Side nav active: Marketplace.
+Page header: H1 “Geospatial Marketplace” · description “Trusted data products and services from government and approved partners.” · search field 400 px on the right.
+Layout: filter rail 240 · product grid (flex) · detail drawer 440 (open).
+Filter rail: checkbox groups — Product type (Datasets, Services & APIs, AI outputs, Imagery) · Provider (Government entity, Approved partner) · Licence (Government-only, Commercial, Open) · Access model (Included, Subscription, Pay-per-use) · Theme.
+Grid (2 columns × 3 rows, 6 cards, because the drawer is open): card = 120 px thumbnail (map or 3D render) · provider badge (“Government” navy / “Partner” teal) · H3 title · provider name · classification badge + “Marketplace” chip · licence chip · access chip · footer row: “128 subscribers” · “SLA Tier 1”.
+Products: Building Footprints 3D (DMT) · Land Parcels API (DMT) · Population Grid 100 m (SCAD) · Mangrove Extent Time Series (EAD) · Change Detection Results (AD-SDI GeoAI) · Rooftop Solar Potential (Partner).
+Detail drawer — “Building Footprints 3D”: hero 3D render (180 px) · provider DMT · badges · tabs Overview (active) · Licence · SLA · API · Usage.
+Overview facts: Coverage “Approved pilot areas” · Formats “3D Tiles · OGC API” · Update “Quarterly”.
+Info row with check icon: “Source dataset quality-checked in Clearinghouse”.
+Two radio cards: “Government entity — included” and “Commercial — subscription” (selected).
+3 licence bullets in Small text.
+Primary “Request access” + secondary “Preview sample”.
+Rule: no prices or currency amounts anywhere on marketplace screens.
+State: card “Building Footprints 3D” selected (2 px Blue 600 border).
+S09 — Marketplace Request & Entitlements (3 frames)
+S09a — Request modal. S08 in background dimmed (Navy 900 at 50%). Modal 720 × 640, centred.
+Stepper: 1 Choose plan ✓ · 2 Purpose & licence (current) · 3 Payment · 4 Approval.
+Left column fields: Organisation (filled, green “Verified” chip) · Intended use dropdown (“Urban planning”) · Project description textarea (2 lines of sample text) · checkbox “I accept the licence terms” (link) · checkbox “I accept the data-use agreement” (link) · Expected volume “50,000 API calls / month”.
+Right column summary card: product thumbnail, name, provider, plan “Commercial — subscription”, classification, SLA tier.
+Footer: “Back” ghost · “Continue” primary.
+S09b — My entitlements page (workspace). H1 “My entitlements” · info banner “1 request awaiting provider approval”. Table (5 rows): Product · Provider · Plan · Status (Active green / Pending amber / Expiring amber) · API key (masked “adsdi_••••••3f9a” + copy + rotate icons) · Usage this month (progress bar vs quota) · Renews. Right side card “Usage, last 30 days” with bar chart.
+S09c — Provider workspace (workspace, persona “Khalid M. · DMT”). H1 “My products” · primary “Submit new product”. Table: Product · Version · Stage tracker inline (Submitted → Quality check → Approval → Published) · Subscribers · Usage (30 d). One row at “Approval — pending”. Right card “Usage & revenue-share report” with monthly bars and Micro note “Per approved revenue-sharing model”.
+S10 — Digital Twin 3D (workspace, dark, collapsed nav) — showcase screen
+Layout: collapsed nav 72 (dark) · full-bleed 3D scene to the frame edges · floating panels (Dark surface at 92%, 12 px radius, backdrop blur 16 px, 1px white 8% border).
+3D scene: oblique view of a compact waterfront district on Abu Dhabi Island at dusk. 3D buildings in muted blue-grey with subtle window-light texture; one tower highlighted in #2BA6DE with outline glow. Roads with animated-looking traffic gradient (green → amber). Water reflective dark blue. 12 IoT sensor pins floating 20 px above ground, each a 24 px circle with type icon and a soft pulse ring. One block shows underground utility pipes through a semi-transparent ground cut.
+Top-left pill: “Pilot area · Waterfront district” with info icon.
+Top-centre use-case selector (segmented, dark): Urban planning (active) · Assets & facilities · Mobility & environment · Site context · Resilience. Under it, two pills “A: Approved plan” | “B: Proposed amendment” + “Compare” toggle.
+Left panel “Layers” (264 px): toggles with icons — Terrain · 3D buildings · BIM models · Underground utilities · Live IoT sensors · Traffic flow · Planning zones. Two opacity sliders.
+Right panel “Asset” (320 px): “Tower AD-BLD-000482” · Height 142 m · Use: Mixed commercial · BIM model linked (IFC) · Energy 1,240 kW (live, green dot) · Occupancy 68%. Mini line chart “PM2.5 · last 24 h”. Buttons: “Shadow analysis” · “Compare scenarios” · “Open BIM”.
+Bottom “4D timeline” (full width, 64 px): play button · slider 2020 → 2035 · “Now · Sep 2027” gold marker · future years dashed, labelled “Planned” · speed “1×”.
+Bottom-left status chip: “● 46 / 48 live sensors online · data fresh”. Compass and zoom controls bottom-right.
+State: tooltip on one air-quality sensor: “AQ-0117 · PM2.5 18 µg/m³ · Good · Owner: EAD · 12 s ago”.
+Premium touch: cinematic lighting, dusk sky gradient, fine detail. This is the “wow” screen of the set.
+S11 — Programme Command Centre (workspace, dark) — showcase screen
+Page header (dark): H1 “AD-SDI Implementation Programme 2026–2029” + green pill “On track” + grey pill “Baseline schedule” · Micro “Updated 14 Sep 2027, 09:30 GST” · right: secondary “Gate review pack” · secondary “Monthly report”. Under the title, chip row: Steering Committee · monthly · PMO · weekly · Working groups · bi-weekly · Design Authority · fortnightly.
+KPI row (5 cards): Milestone delivery 92% · Gates accepted 1 / 4 · Deliverables on track 26 / 28 · Open risks 10 (3 high) · Next gate M2 · Dec 2027.
+Roadmap card (full width, 260 px): 7 lanes (A–F in module colours + “Programme” in Steel). Time axis Aug 2026 → Jun 2029 with quarter ticks. Phase bands behind: Phase 1 · Phase 2 · Phase 3 · Phase 4, alternating subtle shades. Per lane, rounded bars with chip labels (e.g. A01 ✓ · A02 · A03 · A04). Milestone diamonds at phase ends: M1 green with check, M2 gold outline, M3 / M4 grey. Vertical gold “Today” line at Sep 2027. Critical path drawn as a 2 px gold outline linking A02 → C02 → Phase 3 rollout → M4. Thin dependency arrows from lane A to B, C, E, F.
+Row 3 (260 px):
+Left 4 cols — “Module health”: 6 compact rows: module chip · RAG dot + word · progress bar · current deliverable + due (e.g. “B02 Common models · Dec 2027”). Max one amber.
+Centre 5 cols — “Top risks” table: R02 Contract start later than baseline · R03 Entity data delays or quality gaps · R05 Marketplace approvals delayed · R06 Security review lead times · R08 Twin source data gaps. Columns: ID · Risk · L · I · Owner · Mitigation (status pill).
+Right 3 cols, two stacked cards: “Deliverable acceptance” horizontal stacked bar — Accepted 38 · In review 9 · Conditional 4 · Rejected 1, Micro “Fix window: 10 business days”. “Design conformance” — 148 requirements · 148 traced · 61 verified · 3 deviations proposed, as a thin segmented bar.
+State: tooltip on M2 diamond: “M2 · Core platforms deployed · Gate review Dec 2027”.
+Premium touch: dark glass cards, gold used only for Today line, critical path, M2 and active nav. Numbers bright white, labels white 60%.
+10. Screen specs — part 4
+S12 — GeoMaturity & Training (workspace)
+Page header: H1 “GeoMaturity & Training” · description “Capability uplift across government, measured from the 2026 baseline.” · tabs: Overview (active) · Pathways · Sessions · Certifications · right: “All entities ▾”.
+KPI row (5): Entities assessed 64 / 64 · Average GeoMaturity 2.9 / 5 (Micro: “baseline 2.3”) · Learners trained 1,842 · Pathway completions 412 · Internal trainers 38.
+Row 2 (280 px):
+Left 5 cols — radar chart, 5 axes: Governance · Data · Technology · People · Use. Two shapes: “Baseline 2026” dashed grey, “Current 2027” filled #E07B24 at 20% with 2 px stroke. Legend top-right.
+Right 7 cols — horizontal bar chart “Score by sector”: Infrastructure & Municipal · Environment · Health · Education · Safety & Security · Economy. Bars #E07B24; small grey tick marks for baseline.
+Row 3 (176 px):
+Left 8 cols — “Learning pathways” grid 4 × 2 compact cards (icon, name, enrolments, completion bar): Executives & decision-makers · Data stewards · GIS specialists & analysts · Platform administrators · Developers & integrators · GeoAI & data science · Twin, marketplace & open data · Train-the-trainer (gold border).
+Right 4 cols — “Training effectiveness” 2 × 2 stat tiles: Satisfaction 4.6 / 5 · Competence gain +28% · Applied on the job 71% · GeoMaturity change +0.6.
+State: tooltip on radar “Data · 2.1 → 2.8”.
+S13 — Open Data Portal (public, single frame)
+Lighter and friendlier than other screens: more white, larger imagery, rounder feel (12 px radius cards).
+Hero (y 72–372): image of Abu Dhabi coastline with lighter navy overlay (70%). Headline Display white: “Abu Dhabi Open Geospatial Data”. Subline: “Free to use, reuse and build on.” Search field 640 px. Licence line Micro white: “Published under the Open Data Licence”.
+Stats strip (white card overlapping hero by 40 px): 640 Open datasets · 48k Downloads / month · 1.2M API calls / month · 52 Registered apps.
+Trust line (centred, Small secondary, 4 tiny step icons): “Every dataset is classified, checked, quality-reviewed and approved before release.”
+Popular datasets (4 cards in one row, 180 px tall): Public Parks · Bus Stops & Routes · Beaches & Coastal Access · Cycling Tracks. Each: mini map thumbnail, title, publisher, format chips (CSV · GeoJSON · API), “Next refresh Oct 2027”, download icon button.
+Bottom row (two columns):
+Left 7 cols — “For developers & entities” card with 3 link rows (icon, title, 1-line text, arrow): Open APIs & documentation · Open-source toolkit · Entity onboarding guide.
+Right 5 cols — stacked: gold banner card “GeoHack 2028 — registrations open” with Navy button “Register”; below it a white card with two buttons “Suggest a dataset” and “Report a data issue”.
+Slim footer.
+S14 — Security & Access Console (workspace)
+Page header: H1 “Security & Access” · description “Classification, access control and audit across every dataset and service.” · tabs: Overview (active) · Access requests · Roles · Classification · Audit log.
+Compliance strip (48 px, white card, 6 outline badges with check icons): UAE data residency · Approved hosting · Encrypted in transit & at rest · Security monitoring connected · Security approval per release · Penetration test passed (Jul 2027).
+KPI row (5): Active users 4,820 · Datasets classified 100% · Access requests pending 17 · Blocked attempts (30 d) 23 · MFA on privileged & partner accounts 100%.
+Row 2 (248 px):
+Left 4 cols — top half: donut “Classification” (Open 26% · Shared 54% · Restricted 17% · Confidential 3%). Bottom half: “Release R-2027.09 security gate” mini stage tracker: Assessment ✓ · Pen test ✓ · Whitelisting ⧗ · Approval ○.
+Right 8 cols — table “Access requests” (5 rows): Requester · Entity · Dataset · Classification · Purpose · Approver · Waiting · Approve / Reject icon buttons.
+Row 3 (248 px):
+Left 5 cols — “Access model”: role matrix (5 roles × 5 permissions, check / dash), and chip row below “+ rules by classification · entity · purpose · audience”.
+Right 7 cols — “Audit log” stream (6 rows): time · user · action · resource · result pill (Allowed green / Denied red). Include one “Denied — Restricted dataset, no agreement”.
+State: one access-request row expanded showing purpose text and linked agreement “DSA-2027-021”.
+11. Arabic, content rules and delivery
+11.1 Arabic (RTL) versions — S00, S01, S13 (+ S07 if done)
+Mirror the whole layout: nav, logo position, alignment, icons with direction (arrows, chevrons, back).
+Do not mirror: maps, logos, charts’ time axes, media/play controls, numbers, code.
+Numbers stay 0–9 (Western Arabic digits).
+Use real Arabic text, properly joined, typeset in IBM Plex Sans Arabic. A native Arabic reader must check every string before delivery.
+Language toggle shows “ع” as active.
+11.2 Content rules
+Real Abu Dhabi places and real government entity short names (DMT, EAD, SCAD, DoH, ADEK, ADPHC, ADCD) as data publishers. Never show an entity as failing — use at most one amber “At risk” per screen.
+People: initials avatars and generic first names with initial only (“Fatima A.”, “Khalid M.”, “Omar R.”). No photos of people.
+Dates: screens show a “today” of 14 September 2027. Keep dates consistent across screens.
+Numbers must agree across screens (e.g. 2,480 datasets, 64 entities everywhere).
+No prices, AED amounts or fees on any screen.
+No lorem ipsum, no “Company Name”, no placeholder grey boxes in final frames.
+Every screen ends with the micro-line “Illustrative data — conceptual design” bottom-right.
+11.3 Accessibility
+Text contrast at least 4.5 : 1 (3 : 1 for 18 px+ text).
+Status always shown with icon or word, not colour alone.
+At least one visible focus ring (gold) somewhere in the set.
+11.4 Delivery
+Item
+Detail
+Figma file
+Pages: Cover · Design system · Light screens · Dark screens · Arabic
+View link
+Prototype link, opens each frame at 100%, frames linked per the flow in Section 6, no comments or UI chrome
+PNG exports
+Every frame at 2x (2880 × 2036), named S01_Home_EN.png, S01_Home_AR.png, etc.
+Hero composite (optional)
+One 1440 × 1018 image showing S01, S10 and S11 on laptop/monitor mockups, for a cover page
+Asset list
+Image sources and licences, fonts, icon set
+11.5 Review rounds
+Round 1 — design system page + S00, S01, S11.
+Round 2 — all remaining “Must” screens.
+Round 3 — “Nice” screens, Arabic versions, final polish and exports.
+11.6 Final checklist before handover
+☐ All frames exactly 1440 × 1018, nothing beyond the frame, 24 px safe margin respected
+☐ No text smaller than 12 px
+☐ DGE logo correct and unaltered; no other company logos
+☐ One accent colour; module colours consistent on every screen
+☐ One icon family; one English and one Arabic typeface
+☐ Numbers, names and dates consistent across all screens
+☐ No prices, no lorem ipsum, no people photos
+☐ Classification badge on every dataset, product and report
+☐ Maps have scale bar, north arrow, coordinates and attribution
+☐ Arabic checked by a native reader
+☐ View link opens each frame cleanly at 100%
+☐ 2x PNG pack delivered with correct names
