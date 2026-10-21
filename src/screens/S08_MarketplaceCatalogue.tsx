@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScreenId } from '../types';
 import { HeaderWorkspace } from '../components/common/HeaderWorkspace';
 import { SidebarWorkspace } from '../components/common/SidebarWorkspace';
@@ -33,6 +33,7 @@ interface S08Props {
 export const S08_MarketplaceCatalogue: React.FC<S08Props> = ({ onNavigate }) => {
   const [selectedProductId, setSelectedProductId] = useState<number>(1);
   const [drawerOpen, setDrawerOpen] = useState(true);
+  const [isMapFullscreen, setIsMapFullscreen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'included' | 'subscription'>('subscription');
   const [activeDrawerTab, setActiveDrawerTab] = useState('Overview');
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,6 +43,17 @@ export const S08_MarketplaceCatalogue: React.FC<S08Props> = ({ onNavigate }) => 
   // Filter States
   const [selectedTypes, setSelectedTypes] = useState<string[]>(['Datasets & Packages', 'Services & Live APIs', 'AI Outputs & Feeds']);
   const [selectedProviders, setSelectedProviders] = useState<string[]>(['Government Entity (DMT, EAD)', 'Approved Sovereign Partner']);
+
+  // Handle Escape key to cleanly exit fullscreen map mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMapFullscreen) {
+        setIsMapFullscreen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMapFullscreen]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -394,17 +406,56 @@ export const S08_MarketplaceCatalogue: React.FC<S08Props> = ({ onNavigate }) => 
             {drawerOpen && (
               <div className="w-[440px] border-l border-border bg-white p-5 flex flex-col justify-between overflow-y-auto flex-shrink-0 shadow-level-2">
                 <div className="space-y-4">
-                  {/* Real Interactive Leaflet GIS Map instead of static SVG mock */}
-                  <div className="h-[170px] w-full rounded-xl overflow-hidden relative border border-border bg-[#0A1628]">
-                    <InteractiveMap mode={selectedProduct.mapMode} isDarkTheme={true} height="100%" />
-                    <div className="absolute top-2.5 left-2.5 bg-navy-900/90 backdrop-blur-xs text-white text-[9px] font-mono px-2 py-0.5 rounded border border-white/20 z-10 pointer-events-none flex items-center gap-1">
-                      <MapIcon className="w-3 h-3 text-[#E5A817]" />
-                      <span>Live GIS Stream</span>
-                    </div>
-                    <div className="absolute bottom-2.5 left-2.5 right-2.5 text-[10px] font-bold text-white bg-black/60 backdrop-blur-xs px-2 py-0.5 rounded flex items-center justify-between z-10 pointer-events-none">
-                      <span>{selectedProduct.title.split(' ')[0]} Master Cadastre</span>
-                      <span className="text-gold-500 font-mono">Quarterly Update</span>
-                    </div>
+                  {/* Real Interactive Leaflet GIS Map with prominent preview height & full viewport expansion */}
+                  <div
+                    className={`transition-all duration-300 ${
+                      isMapFullscreen
+                        ? 'fixed inset-0 z-[9999] w-screen h-screen bg-[#0A1628]'
+                        : 'h-[310px] w-full rounded-xl overflow-hidden relative border border-border bg-[#0A1628] shadow-sm'
+                    }`}
+                  >
+                    <InteractiveMap
+                      mode={selectedProduct.mapMode}
+                      isDarkTheme={true}
+                      isFullscreen={isMapFullscreen}
+                      onToggleFullscreen={() => setIsMapFullscreen((prev) => !prev)}
+                      showSearchThisArea={isMapFullscreen}
+                      hideLegend={!isMapFullscreen}
+                      className="w-full h-full"
+                    />
+
+                    {/* Compact Live Stream badge in drawer preview */}
+                    {!isMapFullscreen && (
+                      <div className="absolute top-3 left-3 bg-navy-950/85 backdrop-blur-md text-white text-[10px] font-mono px-2.5 py-1 rounded-md border border-white/20 z-10 pointer-events-none flex items-center gap-1.5 shadow-md">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span className="font-semibold text-white">Live GIS Stream</span>
+                        <span className="text-white/40">|</span>
+                        <span className="text-gold-400 font-sans text-[11px] font-medium">{selectedProduct.title.split(' ')[0]}</span>
+                      </div>
+                    )}
+
+                    {/* Fullscreen HUD & Exit Controls */}
+                    {isMapFullscreen && (
+                      <div className="absolute top-4 left-4 z-30 flex items-center gap-3">
+                        <div className="bg-navy-950/90 backdrop-blur-md text-white text-xs font-mono px-3.5 py-2 rounded-lg border border-white/20 shadow-xl flex items-center gap-2.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                          <span className="font-bold text-white tracking-wide text-sm">{selectedProduct.title}</span>
+                          <span className="text-white/30">|</span>
+                          <span className="text-gold-400 font-sans text-xs">{selectedProduct.provider}</span>
+                          <span className="text-white/30">|</span>
+                          <span className="text-emerald-400 text-xs font-mono">{selectedProduct.sla}</span>
+                        </div>
+                        <button
+                          onClick={() => setIsMapFullscreen(false)}
+                          className="h-9 bg-white/95 hover:bg-white text-navy-900 shadow-xl backdrop-blur px-3.5 rounded-lg border border-border text-[12px] font-bold flex items-center gap-1.5 transition-all cursor-pointer hover:text-rose-600"
+                          title="Exit Fullscreen (Esc)"
+                        >
+                          <X className="w-4 h-4 text-rose-600" />
+                          <span>Exit Fullscreen</span>
+                          <kbd className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200 ml-1 font-mono">Esc</kbd>
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                   {/* Title & Badges */}

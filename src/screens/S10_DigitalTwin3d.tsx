@@ -65,6 +65,9 @@ interface BuildingAsset {
   side2: string;
   color: string;
   roofColor: string;
+  daySide1: string;
+  daySide2: string;
+  dayRoof: string;
 }
 
 export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
@@ -73,7 +76,7 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<1 | 2 | 4>(1);
   const [viewMode, setViewMode] = useState<'3d' | 'satellite' | 'bim'>('3d');
-  const [timeOfDay, setTimeOfDay] = useState<'day' | 'dusk' | 'night'>('dusk');
+  const [timeOfDay, setTimeOfDay] = useState<'day' | 'dusk' | 'night'>('day');
   const [activeScenario, setActiveScenario] = useState<'A' | 'B'>('A');
   const [activeSimulation, setActiveSimulation] = useState<'none' | 'solar' | 'wind' | 'thermal'>('none');
   const [cameraAngle, setCameraAngle] = useState({ yaw: 0, pitch: 0, zoom: 1 });
@@ -129,7 +132,7 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
     setLayers((prev) => ({ ...prev, [k]: !prev[k] }));
   };
 
-  // 3D Buildings Catalog
+  // 3D Buildings Catalog - Architectural Daytime & Night Styling
   const buildings: BuildingAsset[] = [
     {
       id: 'AD-BLD-000482',
@@ -150,6 +153,9 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
       roofPolygon: '500,190 560,160 650,190 590,220',
       color: '#1F5FAD',
       roofColor: '#43C8FF',
+      daySide1: '#E0F2FE',
+      daySide2: '#BAE6FD',
+      dayRoof: '#7DD3FC',
     },
     {
       id: 'AD-BLD-000483',
@@ -170,6 +176,9 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
       roofPolygon: '320,335 370,310 440,330 390,355',
       color: '#1A3459',
       roofColor: '#2E5587',
+      daySide1: '#FFFFFF',
+      daySide2: '#E2E8F0',
+      dayRoof: '#F8FAFC',
     },
     {
       id: 'AD-BLD-000484',
@@ -190,6 +199,9 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
       roofPolygon: '460,380 510,360 580,380 530,400',
       color: '#152C4A',
       roofColor: '#284E7A',
+      daySide1: '#F8FAFC',
+      daySide2: '#CBD5E1',
+      dayRoof: '#E2E8F0',
     },
     {
       id: 'AD-BLD-000485',
@@ -210,6 +222,9 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
       roofPolygon: '620,260 660,240 720,260 680,280',
       color: '#1E375C',
       roofColor: '#2E5587',
+      daySide1: '#FFFFFF',
+      daySide2: '#DCE3EC',
+      dayRoof: '#F1F5F9',
     },
     {
       id: 'AD-BLD-000486',
@@ -230,6 +245,9 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
       roofPolygon: '740,240 780,220 840,240 800,260',
       color: '#1C3150',
       roofColor: '#28466E',
+      daySide1: '#FEF3C7',
+      daySide2: '#FDE68A',
+      dayRoof: '#F5E6D3',
     },
     {
       id: 'AD-BLD-000490',
@@ -250,6 +268,9 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
       roofPolygon: '850,160 900,140 970,160 920,180',
       color: '#0E9F8E',
       roofColor: '#2BD2BD',
+      daySide1: '#A7F3D0',
+      daySide2: '#6EE7B7',
+      dayRoof: '#34D399',
     },
   ];
 
@@ -336,7 +357,7 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
   return (
     <div
       onMouseUp={handleMouseUp}
-      className="w-full h-screen bg-[#07111E] text-white flex flex-col justify-between overflow-hidden select-none font-sans relative"
+      className="w-full h-screen bg-canvas text-primaryText flex flex-col justify-between overflow-hidden select-none font-sans relative"
     >
       {/* Toast Notification */}
       {toastMessage && (
@@ -350,19 +371,19 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
       <HeaderWorkspace currentScreen="S10_DigitalTwin3d" onNavigate={onNavigate} />
 
       <div className="flex-1 flex overflow-hidden relative">
-        {/* 2. Collapsed Dark Sidebar */}
+        {/* 2. Collapsed Light Sidebar */}
         <SidebarWorkspace
           currentScreen="S10_DigitalTwin3d"
           onNavigate={onNavigate}
           collapsed={true}
-          isDarkTheme={true}
+          isDarkTheme={false}
         />
 
         {/* 3. Full-Bleed 3D Scene Viewport */}
         <div
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
-          className="flex-1 h-full relative overflow-hidden bg-[#06101D] cursor-grab active:cursor-grabbing"
+          className="flex-1 h-full relative overflow-hidden bg-slate-100 cursor-grab active:cursor-grabbing"
         >
           {/* VIEW MODE 1: REAL SATELLITE GIS TWIN */}
           {viewMode === 'satellite' ? (
@@ -371,41 +392,41 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                 mode="parcels"
                 center={[24.4750, 54.3680]}
                 zoom={16}
-                isDarkTheme={timeOfDay !== 'day'}
+                isDarkTheme={timeOfDay === 'night'}
                 className="w-full h-full"
               />
               {/* Overlay Badge */}
-              <div className="absolute top-4 left-4 z-20 bg-navy-900/90 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 text-[12px] flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+              <div className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-md px-4 py-2 rounded-xl border border-border shadow-md text-[12px] text-navy-900 flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="font-bold">Abu Dhabi Waterfront · 0.15m Sovereign Orthophoto Twin</span>
               </div>
             </div>
           ) : viewMode === 'bim' ? (
             /* VIEW MODE 2: BIM ARCHITECTURAL EXPLORER */
-            <div className="absolute inset-0 z-0 bg-[#08182D] flex items-center justify-center p-8">
-              <div className="w-full max-w-5xl h-full max-h-[640px] bg-[#0E1E34] border border-cyan-500/30 rounded-2xl p-6 shadow-2xl flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-3 border-b border-white/10">
+            <div className="absolute inset-0 z-0 bg-slate-100 flex items-center justify-center p-8">
+              <div className="w-full max-w-5xl h-full max-h-[640px] bg-white border border-border rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+                <div className="flex items-center justify-between pb-3 border-b border-border">
                   <div className="flex items-center gap-3">
-                    <Building className="w-6 h-6 text-cyan-400" />
+                    <Building className="w-6 h-6 text-blue-600" />
                     <div>
-                      <h2 className="text-[18px] font-bold text-white">
+                      <h2 className="text-[18px] font-bold text-navy-900">
                         BIM Architectural Explorer · {selectedAsset.name}
                       </h2>
-                      <span className="text-[11px] font-mono text-cyan-300">
+                      <span className="text-[11px] font-mono text-secondaryText">
                         IFC 4.3 Schema · 4,820 Geometric Objects · Level of Development LOD 350
                       </span>
                     </div>
                   </div>
                   <button
                     onClick={() => setViewMode('3d')}
-                    className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[12px] font-bold"
+                    className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[12px] font-bold shadow-sm transition-colors"
                   >
                     Back to 3D Simulation
                   </button>
                 </div>
 
                 {/* BIM Cross-Section Wireframe Illustration */}
-                <div className="flex-1 my-4 bg-black/40 rounded-xl border border-white/10 p-4 flex items-center justify-center relative overflow-hidden">
+                <div className="flex-1 my-4 bg-slate-900 rounded-xl border border-slate-800 p-4 flex items-center justify-center relative overflow-hidden shadow-inner">
                   <svg viewBox="0 0 800 360" className="w-full h-full">
                     {/* Floor slabs */}
                     {Array.from({ length: 12 }).map((_, f) => (
@@ -415,13 +436,13 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                           y={40 + f * 24}
                           width="560"
                           height="4"
-                          fill="#43C8FF"
-                          opacity={0.7}
+                          fill="#38BDF8"
+                          opacity={0.8}
                         />
                         <text
                           x="70"
                           y={44 + f * 24}
-                          fill="#7A9CC6"
+                          fill="#94A3B8"
                           fontSize="9"
                           fontFamily="monospace"
                         >
@@ -433,7 +454,7 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                           y1={42 + f * 24}
                           x2="220"
                           y2={64 + f * 24}
-                          stroke="#E07B24"
+                          stroke="#FB923C"
                           strokeWidth="2"
                         />
                         <line
@@ -441,7 +462,7 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                           y1={42 + f * 24}
                           x2="580"
                           y2={64 + f * 24}
-                          stroke="#1E9E6A"
+                          stroke="#34D399"
                           strokeWidth="2"
                         />
                       </g>
@@ -453,14 +474,14 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                       width="80"
                       height="300"
                       fill="none"
-                      stroke="#FFC20E"
+                      stroke="#FBBF24"
                       strokeWidth="2"
                       strokeDasharray="4 2"
                     />
                     <text
                       x="400"
                       y="180"
-                      fill="#FFC20E"
+                      fill="#FBBF24"
                       fontSize="10"
                       fontWeight="bold"
                       textAnchor="middle"
@@ -469,30 +490,30 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                     </text>
                   </svg>
                   {/* Floating BIM Legend */}
-                  <div className="absolute top-4 right-4 bg-navy-900/90 backdrop-blur-md p-3 rounded-xl border border-white/10 text-[10px] space-y-1 font-mono">
-                    <div className="text-cyan-400 font-bold">BIM Systems:</div>
-                    <div className="text-white flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#43C8FF]" /> Structural Slabs
+                  <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md p-3 rounded-xl border border-border shadow-md text-[10px] space-y-1.5 font-mono text-navy-900">
+                    <div className="text-blue-600 font-bold">BIM Systems:</div>
+                    <div className="text-slate-700 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-[#38BDF8]" /> Structural Slabs
                     </div>
-                    <div className="text-white flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#E07B24]" /> HVAC Ducts & Chilled Water
+                    <div className="text-slate-700 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-[#FB923C]" /> HVAC Ducts & Chilled Water
                     </div>
-                    <div className="text-white flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#1E9E6A]" /> Electrical Busbars
+                    <div className="text-slate-700 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-[#34D399]" /> Electrical Busbars
                     </div>
-                    <div className="text-white flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-[#FFC20E]" /> Fire Safety & Lift Cores
+                    <div className="text-slate-700 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-[#FBBF24]" /> Fire Safety & Lift Cores
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-steel-400">
+                <div className="flex items-center justify-between text-[11px] text-secondaryText">
                   <span>Linked Source: DMT Master Cadastre & Municipal BIM Repository</span>
                   <button
                     onClick={() => showToast('Exporting IFC 4.3 BIM file...')}
-                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg font-semibold flex items-center gap-1.5"
+                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-navy-900 border border-border rounded-lg font-semibold flex items-center gap-1.5 transition-colors shadow-sm"
                   >
-                    <Download className="w-3.5 h-3.5" />
+                    <Download className="w-3.5 h-3.5 text-blue-600" />
                     <span>Download IFC Model</span>
                   </button>
                 </div>
@@ -517,9 +538,9 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                   <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
                     {timeOfDay === 'day' ? (
                       <>
-                        <stop offset="0%" stopColor="#2E69A3" />
-                        <stop offset="60%" stopColor="#4A88C7" />
-                        <stop offset="100%" stopColor="#89BDEC" />
+                        <stop offset="0%" stopColor="#7DD3FC" />
+                        <stop offset="45%" stopColor="#BAE6FD" />
+                        <stop offset="100%" stopColor="#F0F9FF" />
                       </>
                     ) : timeOfDay === 'night' ? (
                       <>
@@ -538,27 +559,39 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
 
                   {/* Water Gradient */}
                   <linearGradient id="waterGrad" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#08182D" />
-                    <stop offset="50%" stopColor="#0B2240" />
-                    <stop offset="100%" stopColor="#07172B" />
+                    {timeOfDay === 'day' ? (
+                      <>
+                        <stop offset="0%" stopColor="#0284C7" />
+                        <stop offset="35%" stopColor="#0EA5E9" />
+                        <stop offset="75%" stopColor="#38BDF8" />
+                        <stop offset="100%" stopColor="#BAE6FD" />
+                      </>
+                    ) : (
+                      <>
+                        <stop offset="0%" stopColor="#08182D" />
+                        <stop offset="50%" stopColor="#0B2240" />
+                        <stop offset="100%" stopColor="#07172B" />
+                      </>
+                    )}
                   </linearGradient>
+
+                  {/* Glass Cut Pattern for Utilities */}
+                  <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(148, 163, 184, 0.25)" strokeWidth="0.8" />
+                  </pattern>
 
                   {/* Cyan Glow Filter */}
                   <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="8" result="blur" />
+                    <feGaussianBlur stdDeviation="6" result="blur" />
                     <feMerge>
                       <feMergeNode in="blur" />
                       <feMergeNode in="SourceGraphic" />
                     </feMerge>
                   </filter>
 
-                  {/* Gold Glow Filter */}
-                  <filter id="glowGold" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="6" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
+                  {/* Drop Shadow for Buildings & Nodes */}
+                  <filter id="archShadow" x="-10%" y="-10%" width="120%" height="130%">
+                    <feDropShadow dx="3" dy="6" stdDeviation="6" floodColor="#0F172A" floodOpacity="0.12" />
                   </filter>
                 </defs>
 
@@ -571,45 +604,110 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                   fill="url(#waterGrad)"
                 />
 
-                {/* Water Specular Waves */}
-                {Array.from({ length: 16 }).map((_, i) => (
+                {/* Water Specular Waves & Shimmer */}
+                {Array.from({ length: 18 }).map((_, i) => (
                   <ellipse
                     key={i}
-                    cx={160 + i * 58}
-                    cy={570 + (i % 5) * 45}
-                    rx={35 + (i % 3) * 20}
-                    ry={2.5}
-                    fill={timeOfDay === 'night' ? 'rgba(67, 200, 255, 0.2)' : 'rgba(43, 166, 222, 0.15)'}
+                    cx={130 + i * 54}
+                    cy={555 + (i % 6) * 44}
+                    rx={32 + (i % 4) * 16}
+                    ry={2.2}
+                    fill={timeOfDay === 'day' ? 'rgba(255, 255, 255, 0.55)' : 'rgba(67, 200, 255, 0.2)'}
                   />
                 ))}
 
+                {/* Marina Piers & Moored Yachts */}
+                <g id="marina-docks">
+                  {/* Pier 1 */}
+                  <polygon points="120,490 200,445 212,453 132,498" fill={timeOfDay === 'day' ? '#F5E6D3' : '#1C2E46'} stroke="#CBD5E1" strokeWidth="1" />
+                  {/* Pier 2 */}
+                  <polygon points="160,540 240,495 252,503 172,548" fill={timeOfDay === 'day' ? '#F5E6D3' : '#1C2E46'} stroke="#CBD5E1" strokeWidth="1" />
+
+                  {/* Moored White Yacht 1 */}
+                  <g transform="translate(165, 460) rotate(-26)">
+                    <polygon points="0,0 28,-4 34,0 28,4 0,0" fill="#FFFFFF" stroke="#94A3B8" strokeWidth="0.8" />
+                    <polygon points="6,-2 18,-3 20,0 18,3 6,2" fill="#0284C7" />
+                  </g>
+                  {/* Moored White Yacht 2 */}
+                  <g transform="translate(205, 510) rotate(-26)">
+                    <polygon points="0,0 26,-4 32,0 26,4 0,0" fill="#FFFFFF" stroke="#94A3B8" strokeWidth="0.8" />
+                    <polygon points="6,-2 16,-3 18,0 16,3 6,2" fill="#0284C7" />
+                  </g>
+                </g>
+
                 {/* Simulated Solar Shadows */}
                 {activeSimulation === 'solar' && (
-                  <g id="solar-shadows" opacity={0.45}>
-                    <polygon points="500,470 380,590 490,620 650,470" fill="#000000" />
-                    <polygon points="320,440 240,510 320,530 440,435" fill="#000000" />
-                    <polygon points="620,380 540,460 620,480 720,380" fill="#000000" />
+                  <g id="solar-shadows" opacity={timeOfDay === 'day' ? 0.25 : 0.45}>
+                    <polygon points="500,470 380,590 490,620 650,470" fill="#0F172A" />
+                    <polygon points="320,440 240,510 320,530 440,435" fill="#0F172A" />
+                    <polygon points="620,380 540,460 620,480 720,380" fill="#0F172A" />
                   </g>
                 )}
 
                 {/* Quayside Promenades & Landmass */}
+                {/* 1. Base Paved Landmass */}
                 <polygon
                   points="220,440 940,320 1080,480 320,680"
-                  fill={timeOfDay === 'night' ? '#0C182A' : '#13243B'}
-                  stroke="#2B4973"
+                  fill={timeOfDay === 'day' ? '#F8FAFC' : timeOfDay === 'night' ? '#0C182A' : '#13243B'}
+                  stroke={timeOfDay === 'day' ? '#E2E8F0' : '#2B4973'}
                   strokeWidth="2"
+                  filter="url(#archShadow)"
                 />
 
-                {/* Mangroves & Coastal Greenery Buffer */}
+                {/* 2. Waterfront Boardwalk Decking along the shoreline */}
+                <polygon
+                  points="220,440 320,680 340,665 240,436"
+                  fill={timeOfDay === 'day' ? '#F5E6D3' : '#1B2C46'}
+                  stroke={timeOfDay === 'day' ? '#E2D9C8' : '#2B4973'}
+                  strokeWidth="1"
+                />
+                {/* Boardwalk planking notches */}
+                {Array.from({ length: 14 }).map((_, pi) => (
+                  <line
+                    key={pi}
+                    x1={225 + pi * 7.5}
+                    y1={442 + pi * 17}
+                    x2={238 + pi * 7.5}
+                    y2={438 + pi * 17}
+                    stroke={timeOfDay === 'day' ? '#E2D9C8' : '#243C5E'}
+                    strokeWidth="1"
+                  />
+                ))}
+
+                {/* 3. Landscaped Coastal Mangrove & Greenery Sanctuary */}
                 {layers.greenery && (
                   <g id="mangrove-buffer">
+                    {/* Main organic lawn */}
                     <path
-                      d="M 230 450 Q 280 430 330 460 T 400 480 L 360 520 Z"
-                      fill="#1E9E6A"
-                      opacity="0.65"
+                      d="M 245 448 Q 290 425 350 450 T 430 480 Q 400 520 340 525 T 260 480 Z"
+                      fill={timeOfDay === 'day' ? '#86EFAC' : '#1E9E6A'}
+                      stroke={timeOfDay === 'day' ? '#22C55E' : '#2BA6DE'}
+                      strokeWidth="1.5"
+                      opacity={timeOfDay === 'day' ? 0.75 : 0.65}
                     />
-                    <text x="270" y="475" fill="#6EE7B7" fontSize="9" fontWeight="bold">
-                      Mangrove Canopy
+                    <path
+                      d="M 270 460 Q 310 445 360 465 T 410 490 Q 380 515 330 515 Z"
+                      fill={timeOfDay === 'day' ? '#4ADE80' : '#166534'}
+                      opacity="0.8"
+                    />
+                    {/* Stylized Palm Trees */}
+                    {[
+                      { tx: 275, ty: 470 },
+                      { tx: 310, ty: 458 },
+                      { tx: 345, ty: 475 },
+                      { tx: 375, ty: 495 },
+                      { tx: 395, ty: 480 },
+                    ].map((pt, pti) => (
+                      <g key={pti} transform={`translate(${pt.tx}, ${pt.ty})`}>
+                        <line x1="0" y1="0" x2="-2" y2="-12" stroke="#78350F" strokeWidth="1.8" strokeLinecap="round" />
+                        <circle cx="-2" cy="-13" r="6" fill="#15803D" opacity="0.9" />
+                        <circle cx="-2" cy="-13" r="3.5" fill="#22C55E" />
+                      </g>
+                    ))}
+                    {/* Label Badge */}
+                    <rect x="275" y="432" width="145" height="18" rx="9" fill={timeOfDay === 'day' ? 'rgba(255,255,255,0.95)' : 'rgba(10,25,45,0.9)'} stroke={timeOfDay === 'day' ? '#86EFAC' : '#2BA6DE'} strokeWidth="1" />
+                    <text x="347" y="444" fill={timeOfDay === 'day' ? '#166534' : '#6EE7B7'} fontSize="9" fontWeight="bold" textAnchor="middle">
+                      🌿 Mangrove Biosphere Park
                     </text>
                   </g>
                 )}
@@ -617,45 +715,64 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                 {/* Underground Sovereign Utility Cut (-6.5m) */}
                 {layers.utilities && (
                   <g id="underground-cut" opacity={utilityDepth / 100}>
+                    {/* Frosted Engineering Trench Base */}
                     <polygon
                       points="380,590 560,530 640,620 440,680"
-                      fill="rgba(8, 18, 32, 0.9)"
-                      stroke="#FFC20E"
+                      fill={timeOfDay === 'day' ? 'rgba(241, 245, 249, 0.94)' : 'rgba(8, 18, 32, 0.9)'}
+                      stroke={timeOfDay === 'day' ? '#0284C7' : '#FFC20E'}
                       strokeWidth="1.5"
                       strokeDasharray="4 2"
                     />
-                    {/* Water pipe (Cyan) */}
+                    {/* Grid texture */}
+                    <polygon
+                      points="380,590 560,530 640,620 440,680"
+                      fill="url(#gridPattern)"
+                    />
+                    {/* Trench depth grid lines */}
+                    <line x1="420" y1="575" x2="480" y2="665" stroke={timeOfDay === 'day' ? '#CBD5E1' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
+                    <line x1="470" y1="560" x2="530" y2="650" stroke={timeOfDay === 'day' ? '#CBD5E1' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
+                    <line x1="520" y1="545" x2="580" y2="635" stroke={timeOfDay === 'day' ? '#CBD5E1' : 'rgba(255,255,255,0.1)'} strokeWidth="1" />
+
+                    {/* District Chilled Water Pipe (Cyan) */}
                     <path
                       d="M 390 600 L 550 545 L 630 625"
-                      stroke="#2BA6DE"
+                      stroke="#0284C7"
                       strokeWidth="4"
                       fill="none"
-                      filter="url(#glowCyan)"
+                      strokeLinecap="round"
                     />
-                    {/* High-Voltage Power (Gold) */}
+                    {/* High-Voltage Smart Grid (Gold) */}
                     <path
                       d="M 405 615 L 565 560 L 635 635"
-                      stroke="#FFC20E"
-                      strokeWidth="3"
+                      stroke="#D97706"
+                      strokeWidth="3.5"
                       fill="none"
+                      strokeLinecap="round"
                     />
-                    {/* Sovereign Fiber Network (Green) */}
+                    {/* Sovereign Fiber Telecom (Emerald) */}
                     <path
                       d="M 420 630 L 580 575 L 640 645"
-                      stroke="#1E9E6A"
+                      stroke="#059669"
                       strokeWidth="2.5"
                       fill="none"
+                      strokeLinecap="round"
                     />
-                    {/* District Cooling (Magenta) */}
+                    {/* District Vacuum / Recycled TSE Water (Violet) */}
                     <path
                       d="M 435 645 L 595 590 L 645 655"
-                      stroke="#D946EF"
-                      strokeWidth="3"
+                      stroke="#7C3AED"
+                      strokeWidth="2.5"
                       fill="none"
+                      strokeLinecap="round"
                     />
-                    <text x="500" y="615" fill="#7A9CC6" fontSize="10" fontFamily="monospace">
-                      UTILITY CORRIDOR -6.5m
-                    </text>
+
+                    {/* Clean Engineering Badge */}
+                    <g transform="translate(485, 605)">
+                      <rect x="-95" y="-10" width="190" height="20" rx="4" fill={timeOfDay === 'day' ? '#FFFFFF' : '#0B1C33'} stroke={timeOfDay === 'day' ? '#0284C7' : '#FFC20E'} strokeWidth="1" />
+                      <text x="0" y="4" fill={timeOfDay === 'day' ? '#0B2545' : '#FFC20E'} fontSize="9" fontWeight="bold" fontFamily="monospace" textAnchor="middle">
+                        SOVEREIGN UTILITY CORRIDOR -6.5m
+                      </text>
+                    </g>
                   </g>
                 )}
 
@@ -665,35 +782,46 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                     {/* Main Arterial Roadway */}
                     <path
                       d="M 280 490 L 860 380"
-                      stroke="#1E9E6A"
-                      strokeWidth="8"
+                      stroke="#334155"
+                      strokeWidth="10"
                       strokeLinecap="round"
+                    />
+                    {/* White dashed center line */}
+                    <path
+                      d="M 285 490 L 855 380"
+                      stroke="#FFFFFF"
+                      strokeWidth="1.2"
+                      strokeDasharray="6 6"
                       opacity="0.8"
                     />
+                    {/* Secondary Boulevard */}
                     <path
                       d="M 330 550 L 910 440"
-                      stroke="#E8A317"
-                      strokeWidth="7"
+                      stroke="#334155"
+                      strokeWidth="9"
                       strokeLinecap="round"
-                      opacity="0.75"
                     />
                     <path
-                      d="M 440 370 L 620 580"
-                      stroke="#1E9E6A"
-                      strokeWidth="6"
-                      strokeLinecap="round"
-                      opacity="0.8"
+                      d="M 335 550 L 905 440"
+                      stroke="#FFFFFF"
+                      strokeWidth="1"
+                      strokeDasharray="5 5"
+                      opacity="0.75"
                     />
-                    {/* Moving Traffic Light Dots */}
-                    {Array.from({ length: 6 }).map((_, vi) => (
-                      <circle
-                        key={vi}
-                        cx={300 + vi * 100}
-                        cy={485 - vi * 18}
-                        r="3"
-                        fill="#FFFFFF"
-                        className="animate-pulse"
-                      />
+                    {/* Autonomous Mobility Cross-Connector */}
+                    <path
+                      d="M 440 370 L 620 580"
+                      stroke="#10B981"
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                      opacity="0.9"
+                    />
+                    {/* Moving Autonomous Vehicles */}
+                    {Array.from({ length: 5 }).map((_, vi) => (
+                      <g key={vi} transform={`translate(${300 + vi * 120}, ${485 - vi * 22})`}>
+                        <rect x="-6" y="-3" width="12" height="6" rx="2" fill={vi % 2 === 0 ? '#0284C7' : '#F59E0B'} />
+                        <circle cx="5" cy="0" r="1.5" fill="#FFFFFF" className="animate-pulse" />
+                      </g>
                     ))}
                   </g>
                 )}
@@ -702,12 +830,12 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                 {layers.buildings3d && (
                   <g id="buildings-3d" opacity={buildingOpacity / 100}>
                     {buildings.map((bld) => {
-                      // Check if building exists in timeline year
                       const isBuilt = timelineYear >= bld.completionYear;
                       const isSelected = selectedAsset.id === bld.id;
+                      const isDay = timeOfDay === 'day';
 
                       if (!isBuilt && timelineYear < bld.completionYear - 2) {
-                        return null; // not started yet
+                        return null;
                       }
 
                       // Construction stage wireframe
@@ -723,22 +851,22 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                           >
                             <polygon
                               points={bld.side1}
-                              fill="none"
-                              stroke="#FFC20E"
+                              fill={isDay ? 'rgba(245, 158, 11, 0.08)' : 'none'}
+                              stroke="#F59E0B"
                               strokeWidth="1.5"
                               strokeDasharray="4 2"
                             />
                             <polygon
                               points={bld.side2}
-                              fill="none"
-                              stroke="#FFC20E"
+                              fill={isDay ? 'rgba(245, 158, 11, 0.12)' : 'none'}
+                              stroke="#F59E0B"
                               strokeWidth="1.5"
                               strokeDasharray="4 2"
                             />
                             <text
                               x="880"
                               y="240"
-                              fill="#FFC20E"
+                              fill={isDay ? '#B45309' : '#FFC20E'}
                               fontSize="9"
                               fontWeight="bold"
                               fontFamily="monospace"
@@ -749,6 +877,13 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                         );
                       }
 
+                      // Dynamic daytime colors vs night/dusk colors
+                      const side1Fill = isDay ? (isSelected ? '#E0F2FE' : bld.daySide1) : (isSelected ? '#1F5FAD' : bld.color);
+                      const side2Fill = isDay ? (isSelected ? '#BAE6FD' : bld.daySide2) : (isSelected ? '#2BA6DE' : '#244573');
+                      const roofFill = isDay ? (isSelected ? '#7DD3FC' : bld.dayRoof) : (isSelected ? '#43C8FF' : bld.roofColor);
+                      const strokeColor = isSelected ? '#2563EB' : isDay ? '#94A3B8' : '#244573';
+                      const strokeW = isSelected ? '2.5' : '1';
+
                       return (
                         <g
                           key={bld.id}
@@ -756,59 +891,170 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                             setSelectedAsset(bld);
                             showToast(`Selected Asset: ${bld.name}`);
                           }}
-                          className="cursor-pointer transition-all hover:brightness-125"
+                          className="cursor-pointer transition-all hover:brightness-105"
+                          filter="url(#archShadow)"
                         >
-                          {/* Side 1 */}
+                          {/* Ground Footprint Selection Ring */}
+                          {isSelected && (
+                            <ellipse
+                              cx={bld.id === 'AD-BLD-000482' ? 570 : bld.id === 'AD-BLD-000483' ? 380 : bld.id === 'AD-BLD-000484' ? 520 : bld.id === 'AD-BLD-000485' ? 670 : 790}
+                              cy={bld.id === 'AD-BLD-000482' ? 470 : bld.id === 'AD-BLD-000483' ? 435 : bld.id === 'AD-BLD-000484' ? 435 : bld.id === 'AD-BLD-000485' ? 380 : 360}
+                              rx="60"
+                              ry="24"
+                              fill="none"
+                              stroke="#2563EB"
+                              strokeWidth="2"
+                              strokeDasharray="4 3"
+                              className="animate-pulse"
+                            />
+                          )}
+
+                          {/* Side 1 (Sunlit Facade) */}
                           <polygon
                             points={bld.side1}
-                            fill={isSelected ? '#1F5FAD' : bld.color}
-                            stroke={isSelected ? '#2BA6DE' : '#244573'}
-                            strokeWidth={isSelected ? '2.5' : '1'}
-                            filter={isSelected ? 'url(#glowCyan)' : undefined}
+                            fill={side1Fill}
+                            stroke={strokeColor}
+                            strokeWidth={strokeW}
+                            filter={isSelected && !isDay ? 'url(#glowCyan)' : undefined}
                           />
-                          {/* Side 2 */}
+                          {/* Side 2 (Shaded Facade) */}
                           <polygon
                             points={bld.side2}
-                            fill={isSelected ? '#2BA6DE' : '#244573'}
-                            stroke={isSelected ? '#43C8FF' : '#1E3960'}
-                            strokeWidth={isSelected ? '2.5' : '1'}
-                            filter={isSelected ? 'url(#glowCyan)' : undefined}
+                            fill={side2Fill}
+                            stroke={isSelected ? '#3B82F6' : isDay ? '#64748B' : '#1E3960'}
+                            strokeWidth={strokeW}
+                            filter={isSelected && !isDay ? 'url(#glowCyan)' : undefined}
                           />
                           {/* Roof */}
                           <polygon
                             points={bld.roofPolygon}
-                            fill={isSelected ? '#43C8FF' : bld.roofColor}
-                            stroke={isSelected ? '#FFFFFF' : '#2E5587'}
-                            strokeWidth="1.5"
+                            fill={roofFill}
+                            stroke={isSelected ? '#2563EB' : isDay ? '#94A3B8' : '#2E5587'}
+                            strokeWidth={strokeW}
                           />
 
-                          {/* Hero Tower Windows Lights & Top Antenna */}
+                          {/* Building Facade Architectural Details */}
+                          {/* For Hero Tower: Architectural Curtain Wall Grid & Helipad */}
                           {bld.id === 'AD-BLD-000482' && (
                             <>
+                              {/* Floor bands */}
                               {Array.from({ length: 14 }).map((_, f) => (
                                 <React.Fragment key={f}>
                                   <line
-                                    x1="510"
+                                    x1="505"
                                     y1={200 + f * 18}
-                                    x2="550"
-                                    y2={180 + f * 18}
-                                    stroke={timeOfDay === 'night' ? '#FFEF8A' : 'rgba(255, 255, 255, 0.5)'}
-                                    strokeWidth="1.5"
+                                    x2="555"
+                                    y2={175 + f * 18}
+                                    stroke={isDay ? '#0284C7' : 'rgba(255, 255, 255, 0.5)'}
+                                    strokeWidth="1"
+                                    strokeOpacity={isDay ? 0.35 : 0.6}
                                   />
                                   <line
-                                    x1="570"
-                                    y1={180 + f * 18}
-                                    x2="640"
-                                    y2={205 + f * 18}
-                                    stroke={timeOfDay === 'night' ? '#FFEF8A' : 'rgba(255, 255, 255, 0.7)'}
-                                    strokeWidth="1.5"
+                                    x1="565"
+                                    y1={175 + f * 18}
+                                    x2="645"
+                                    y2={202 + f * 18}
+                                    stroke={isDay ? '#0369A1' : 'rgba(255, 255, 255, 0.7)'}
+                                    strokeWidth="1"
+                                    strokeOpacity={isDay ? 0.4 : 0.7}
                                   />
                                 </React.Fragment>
                               ))}
-                              {/* Antenna Beacon */}
-                              <line x1="575" y1="175" x2="575" y2="120" stroke="#FFC20E" strokeWidth="2" />
-                              <circle cx="575" cy="120" r="3.5" fill="#FFC20E" className="animate-ping" />
+                              {/* Vertical Mullions */}
+                              <line x1="520" y1="195" x2="520" y2="455" stroke={isDay ? '#38BDF8' : '#43C8FF'} strokeWidth="1" strokeOpacity="0.4" />
+                              <line x1="540" y1="185" x2="540" y2="445" stroke={isDay ? '#38BDF8' : '#43C8FF'} strokeWidth="1" strokeOpacity="0.4" />
+                              <line x1="590" y1="185" x2="590" y2="450" stroke={isDay ? '#0284C7' : '#2BA6DE'} strokeWidth="1" strokeOpacity="0.35" />
+                              <line x1="620" y1="195" x2="620" y2="460" stroke={isDay ? '#0284C7' : '#2BA6DE'} strokeWidth="1" strokeOpacity="0.35" />
+
+                              {/* Helipad 'H' on Roof */}
+                              <circle cx="575" cy="190" r="14" fill="none" stroke={isDay ? '#0284C7' : '#FFFFFF'} strokeWidth="1.5" />
+                              <text x="575" y="194" fill={isDay ? '#0284C7' : '#FFFFFF'} fontSize="10" fontWeight="bold" textAnchor="middle">H</text>
+
+                              {/* Antenna Spire */}
+                              <line x1="575" y1="175" x2="575" y2="120" stroke={isDay ? '#0284C7' : '#FFC20E'} strokeWidth="2" />
+                              <circle cx="575" cy="120" r="3.5" fill="#EF4444" className="animate-ping" />
+                              <circle cx="575" cy="120" r="2.5" fill="#EF4444" />
                             </>
+                          )}
+
+                          {/* For Waterfront Bay Residence (AD-BLD-000483): Balcony rows & Green Sky Garden */}
+                          {bld.id === 'AD-BLD-000483' && (
+                            <>
+                              {Array.from({ length: 6 }).map((_, r) => (
+                                <React.Fragment key={r}>
+                                  <line
+                                    x1="325"
+                                    y1={350 + r * 14}
+                                    x2="365"
+                                    y2={330 + r * 14}
+                                    stroke={isDay ? '#0284C7' : '#43C8FF'}
+                                    strokeWidth="1.5"
+                                    strokeOpacity={isDay ? 0.45 : 0.6}
+                                  />
+                                  <line
+                                    x1="375"
+                                    y1={330 + r * 14}
+                                    x2="435"
+                                    y2={348 + r * 14}
+                                    stroke={isDay ? '#64748B' : '#7A9CC6'}
+                                    strokeWidth="1.5"
+                                    strokeOpacity="0.5"
+                                  />
+                                </React.Fragment>
+                              ))}
+                              {/* Rooftop Green Sky Garden */}
+                              <ellipse cx="380" cy="335" rx="18" ry="7" fill={isDay ? '#4ADE80' : '#1E9E6A'} opacity="0.85" />
+                              <circle cx="395" cy="333" r="3" fill={isDay ? '#38BDF8' : '#2BA6DE'} />
+                            </>
+                          )}
+
+                          {/* For Al Maryah Pavilion (AD-BLD-000484): Diamond Bracing */}
+                          {bld.id === 'AD-BLD-000484' && (
+                            <>
+                              <line x1="465" y1="435" x2="505" y2="365" stroke={isDay ? '#0284C7' : '#43C8FF'} strokeWidth="1" strokeOpacity="0.4" />
+                              <line x1="465" y1="385" x2="505" y2="415" stroke={isDay ? '#0284C7' : '#43C8FF'} strokeWidth="1" strokeOpacity="0.4" />
+                              <line x1="515" y1="365" x2="575" y2="435" stroke={isDay ? '#64748B' : '#7A9CC6'} strokeWidth="1" strokeOpacity="0.3" />
+                            </>
+                          )}
+
+                          {/* For Corniche Grand Horizon (AD-BLD-000485): Ribbon Windows */}
+                          {bld.id === 'AD-BLD-000485' && (
+                            <>
+                              {Array.from({ length: 7 }).map((_, f) => (
+                                <line
+                                  key={f}
+                                  x1="625"
+                                  y1={270 + f * 14}
+                                  x2="655"
+                                  y2={255 + f * 14}
+                                  stroke={isDay ? '#0284C7' : '#43C8FF'}
+                                  strokeWidth="1.5"
+                                  strokeOpacity={isDay ? 0.4 : 0.6}
+                                />
+                              ))}
+                            </>
+                          )}
+
+                          {/* Floating Selection Callout Pointer */}
+                          {isSelected && (
+                            <g className="animate-bounce">
+                              <path
+                                d={bld.id === 'AD-BLD-000482' ? 'M 575 105 L 570 92 L 580 92 Z' : bld.id === 'AD-BLD-000483' ? 'M 380 300 L 375 287 L 385 287 Z' : 'M 520 350 L 515 337 L 525 337 Z'}
+                                fill="#2563EB"
+                              />
+                              <circle
+                                cx={bld.id === 'AD-BLD-000482' ? 575 : bld.id === 'AD-BLD-000483' ? 380 : 520}
+                                cy={bld.id === 'AD-BLD-000482' ? 86 : bld.id === 'AD-BLD-000483' ? 281 : 331}
+                                r="7"
+                                fill="#2563EB"
+                              />
+                              <circle
+                                cx={bld.id === 'AD-BLD-000482' ? 575 : bld.id === 'AD-BLD-000483' ? 380 : 520}
+                                cy={bld.id === 'AD-BLD-000482' ? 86 : bld.id === 'AD-BLD-000483' ? 281 : 331}
+                                r="3"
+                                fill="#FFFFFF"
+                              />
+                            </g>
                           )}
                         </g>
                       );
@@ -823,14 +1069,14 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                       <path
                         key={wi}
                         d={`M 150 ${280 + wi * 35} Q 500 ${220 + wi * 40} 950 ${310 + wi * 30}`}
-                        stroke="#38BDF8"
+                        stroke="#0284C7"
                         strokeWidth="2.5"
                         strokeDasharray="8 6"
                         fill="none"
                         className="animate-pulse"
                       />
                     ))}
-                    <text x="320" y="240" fill="#38BDF8" fontSize="11" fontWeight="bold">
+                    <text x="320" y="240" fill={timeOfDay === 'day' ? '#0369A1' : '#38BDF8'} fontSize="11" fontWeight="bold">
                       Wind Velocity Vector: 4.8 m/s (Offshore North-West Breeze)
                     </text>
                   </g>
@@ -839,29 +1085,41 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                 {/* Floating IoT Sensor Markers */}
                 {layers.sensors && (
                   <g id="iot-sensors">
-                    {iotSensors.map((s) => (
-                      <g
-                        key={s.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedSensor(s);
-                          setShowSensorTooltip(true);
-                          showToast(`Sensor Telemetry: ${s.id} (${s.val})`);
-                        }}
-                        className="cursor-pointer group"
-                      >
-                        <circle cx={s.x} cy={s.y} r="14" fill="#2BA6DE" opacity="0.25" />
-                        <circle
-                          cx={s.x}
-                          cy={s.y}
-                          r="8"
-                          fill="#0B2545"
-                          stroke={selectedSensor.id === s.id ? '#FFC20E' : '#2BA6DE'}
-                          strokeWidth="2"
-                        />
-                        <circle cx={s.x} cy={s.y} r="3" fill="#FFC20E" />
-                      </g>
-                    ))}
+                    {iotSensors.map((s) => {
+                      const isSelected = selectedSensor.id === s.id;
+                      return (
+                        <g
+                          key={s.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedSensor(s);
+                            setShowSensorTooltip(true);
+                            showToast(`Sensor Telemetry: ${s.id} (${s.val})`);
+                          }}
+                          className="cursor-pointer group"
+                        >
+                          {/* Subtle pulse ring */}
+                          <circle cx={s.x} cy={s.y} r="16" fill="#0284C7" opacity="0.18" className="animate-ping" />
+                          {/* White elevated puck */}
+                          <circle
+                            cx={s.x}
+                            cy={s.y}
+                            r="8.5"
+                            fill="#FFFFFF"
+                            stroke={isSelected ? '#F59E0B' : '#0284C7'}
+                            strokeWidth={isSelected ? '2.5' : '1.5'}
+                            filter="drop-shadow(0px 2px 4px rgba(0,0,0,0.15))"
+                          />
+                          {/* Glowing center indicator */}
+                          <circle
+                            cx={s.x}
+                            cy={s.y}
+                            r="4"
+                            fill={isSelected ? '#F59E0B' : s.type === 'AQ' ? '#0284C7' : s.type === 'Noise' ? '#10B981' : '#F59E0B'}
+                          />
+                        </g>
+                      );
+                    })}
                   </g>
                 )}
               </svg>
@@ -870,97 +1128,64 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
 
           {/* Floating UI Elements: */}
 
-          {/* Top-Left: Pilot Area Pill, View Switcher & Time-of-Day */}
-          <div className="absolute top-4 left-4 z-20 flex flex-wrap items-center gap-2">
-            <div className="bg-[#13233D]/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 shadow-level-2 flex items-center gap-2 text-[12px] font-medium text-white">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>Waterfront District · 3D Digital Twin</span>
-              <Info className="w-3.5 h-3.5 text-steel-400 ml-1" />
+          {/* Top Unified Header Ribbon across the viewport */}
+          <div className="absolute top-3 left-4 right-4 z-20 flex items-center justify-between gap-3 pointer-events-none">
+            {/* Left: District Badge + View Mode Switcher */}
+            <div className="flex items-center gap-2 pointer-events-auto">
+              <div className="bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border shadow-sm flex items-center gap-2 text-[12px] font-semibold text-navy-900">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Waterfront District · 3D Digital Twin</span>
+                <Info className="w-3.5 h-3.5 text-secondaryText ml-0.5" />
+              </div>
+
+              {/* View Mode 3-Way Switcher */}
+              <div className="bg-white/95 backdrop-blur-md p-1 rounded-full border border-border shadow-sm flex items-center gap-1 text-[11px]">
+                <button
+                  onClick={() => {
+                    setViewMode('3d');
+                    showToast('Switched to 3D Isometric Urban Simulation');
+                  }}
+                  className={`px-3 py-1 rounded-full font-semibold transition-all cursor-pointer ${
+                    viewMode === '3d' ? 'bg-blue-600 text-white shadow font-bold' : 'text-secondaryText hover:text-navy-900'
+                  }`}
+                >
+                  3D Urban View
+                </button>
+                <button
+                  onClick={() => {
+                    setViewMode('satellite');
+                    showToast('Switched to Sovereign High-Res Satellite Twin');
+                  }}
+                  className={`px-3 py-1 rounded-full font-semibold transition-all cursor-pointer ${
+                    viewMode === 'satellite' ? 'bg-blue-600 text-white shadow font-bold' : 'text-secondaryText hover:text-navy-900'
+                  }`}
+                >
+                  Satellite GIS Twin
+                </button>
+                <button
+                  onClick={() => {
+                    setViewMode('bim');
+                    showToast('Switched to BIM Architectural View');
+                  }}
+                  className={`px-3 py-1 rounded-full font-semibold transition-all cursor-pointer ${
+                    viewMode === 'bim' ? 'bg-blue-600 text-white shadow font-bold' : 'text-secondaryText hover:text-navy-900'
+                  }`}
+                >
+                  BIM Explorer
+                </button>
+              </div>
             </div>
 
-            {/* View Mode 3-Way Switcher */}
-            <div className="bg-[#13233D]/90 backdrop-blur-md p-1 rounded-full border border-white/10 shadow-level-2 flex items-center gap-1 text-[11px]">
-              <button
-                onClick={() => {
-                  setViewMode('3d');
-                  showToast('Switched to 3D Isometric Urban Simulation');
-                }}
-                className={`px-3 py-1 rounded-full font-semibold transition-all ${
-                  viewMode === '3d' ? 'bg-blue-600 text-white shadow' : 'text-steel-400 hover:text-white'
-                }`}
-              >
-                3D Urban View
-              </button>
-              <button
-                onClick={() => {
-                  setViewMode('satellite');
-                  showToast('Switched to Sovereign High-Res Satellite Twin');
-                }}
-                className={`px-3 py-1 rounded-full font-semibold transition-all ${
-                  viewMode === 'satellite' ? 'bg-blue-600 text-white shadow' : 'text-steel-400 hover:text-white'
-                }`}
-              >
-                Satellite GIS Twin
-              </button>
-              <button
-                onClick={() => {
-                  setViewMode('bim');
-                  showToast('Switched to BIM Architectural View');
-                }}
-                className={`px-3 py-1 rounded-full font-semibold transition-all ${
-                  viewMode === 'bim' ? 'bg-blue-600 text-white shadow' : 'text-steel-400 hover:text-white'
-                }`}
-              >
-                BIM Explorer
-              </button>
-            </div>
-
-            {/* Time of Day Lighting Toggle */}
-            <div className="bg-[#13233D]/90 backdrop-blur-md p-1 rounded-full border border-white/10 shadow-level-2 flex items-center gap-1 text-[11px]">
-              <button
-                onClick={() => {
-                  setTimeOfDay('day');
-                  showToast('Time of Day: Arabian Day Sun ☀️');
-                }}
-                className={`p-1.5 rounded-full ${timeOfDay === 'day' ? 'bg-amber-500 text-navy-900' : 'text-steel-400 hover:text-white'}`}
-                title="Day Sun"
-              >
-                <Sun className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={() => {
-                  setTimeOfDay('dusk');
-                  showToast('Time of Day: Sovereign Dusk 🌅');
-                }}
-                className={`p-1.5 rounded-full ${timeOfDay === 'dusk' ? 'bg-orange-500 text-white' : 'text-steel-400 hover:text-white'}`}
-                title="Dusk"
-              >
-                <Sunset className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={() => {
-                  setTimeOfDay('night');
-                  showToast('Time of Day: Cyber Night 🌙');
-                }}
-                className={`p-1.5 rounded-full ${timeOfDay === 'night' ? 'bg-indigo-600 text-white' : 'text-steel-400 hover:text-white'}`}
-                title="Night"
-              >
-                <Moon className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Top-Center: Use-Case Selector & Scenario Comparison */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2">
-            <div className="bg-[#13233D]/90 backdrop-blur-md p-1 rounded-xl border border-white/10 shadow-level-2 flex items-center gap-1 text-[12px]">
+            {/* Center: Use-Case Filter Pills */}
+            <div className="pointer-events-auto bg-white/95 backdrop-blur-md p-1 rounded-full border border-border shadow-sm flex items-center gap-1 text-[11px]">
               {useCases.map((uc) => (
                 <button
                   key={uc}
                   onClick={() => setUseCase(uc)}
-                  className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+                  className={`px-3 py-1 rounded-full font-medium transition-all cursor-pointer ${
                     useCase === uc
-                      ? 'bg-blue-600 text-white font-bold shadow-sm'
-                      : 'text-steel-400 hover:text-white'
+                      ? 'bg-blue-600 text-white font-bold shadow-xs'
+                      : 'text-secondaryText hover:text-navy-900'
                   }`}
                 >
                   {uc}
@@ -968,52 +1193,89 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
               ))}
             </div>
 
-            {/* Scenario Pills */}
-            <div className="flex items-center gap-2 bg-[#13233D]/80 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-[11px]">
-              <button
-                onClick={() => {
-                  setActiveScenario('A');
-                  showToast('Loaded Scenario A: Approved Masterplan 2027');
-                }}
-                className={`px-2 py-0.5 rounded font-semibold transition-all ${
-                  activeScenario === 'A'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white/5 text-steel-400 hover:text-white'
-                }`}
-              >
-                A: Approved Masterplan
-              </button>
-              <span className="text-steel-400 text-[10px]">vs</span>
-              <button
-                onClick={() => {
-                  setActiveScenario('B');
-                  showToast('Loaded Scenario B: Proposed 2030 Net-Zero Amendment');
-                }}
-                className={`px-2 py-0.5 rounded font-semibold transition-all ${
-                  activeScenario === 'B'
-                    ? 'bg-emerald-600 text-white'
-                    : 'bg-white/5 text-steel-400 hover:text-white'
-                }`}
-              >
-                B: Proposed 2030 Amendment
-              </button>
-              <button
-                onClick={() => setShowScenarioModal(true)}
-                className="text-gold-500 font-bold ml-1 hover:underline"
-              >
-                Compare Side-by-Side ⇄
-              </button>
+            {/* Right: Scenario Toggle + Lighting Toggle */}
+            <div className="flex items-center gap-2 pointer-events-auto">
+              <div className="bg-white/95 backdrop-blur-md p-1 px-2 rounded-full border border-border shadow-sm flex items-center gap-1.5 text-[11px]">
+                <span className="text-[10px] uppercase font-bold text-secondaryText px-1">Scenario:</span>
+                <button
+                  onClick={() => {
+                    setActiveScenario('A');
+                    showToast('Loaded Scenario A: Approved Masterplan 2027');
+                  }}
+                  className={`px-2 py-0.5 rounded-full font-semibold transition-all cursor-pointer ${
+                    activeScenario === 'A'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-slate-100 text-secondaryText hover:text-navy-900'
+                  }`}
+                >
+                  A: 2027
+                </button>
+                <button
+                  onClick={() => {
+                    setActiveScenario('B');
+                    showToast('Loaded Scenario B: Proposed 2030 Net-Zero Amendment');
+                  }}
+                  className={`px-2 py-0.5 rounded-full font-semibold transition-all cursor-pointer ${
+                    activeScenario === 'B'
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-slate-100 text-secondaryText hover:text-navy-900'
+                  }`}
+                >
+                  B: 2030 (Net-Zero)
+                </button>
+                <button
+                  onClick={() => setShowScenarioModal(true)}
+                  className="text-gold-600 font-bold px-1 hover:underline cursor-pointer"
+                  title="Compare Scenarios Side-by-Side"
+                >
+                  ⇄
+                </button>
+              </div>
+
+              {/* Time of Day Lighting Toggle */}
+              <div className="bg-white/95 backdrop-blur-md p-1 rounded-full border border-border shadow-sm flex items-center gap-1 text-[11px]">
+                <button
+                  onClick={() => {
+                    setTimeOfDay('day');
+                    showToast('Time of Day: Arabian Day Sun ☀️');
+                  }}
+                  className={`p-1.5 rounded-full cursor-pointer ${timeOfDay === 'day' ? 'bg-amber-500 text-white' : 'text-secondaryText hover:text-navy-900'}`}
+                  title="Day Sun"
+                >
+                  <Sun className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => {
+                    setTimeOfDay('dusk');
+                    showToast('Time of Day: Sovereign Dusk 🌅');
+                  }}
+                  className={`p-1.5 rounded-full cursor-pointer ${timeOfDay === 'dusk' ? 'bg-orange-500 text-white' : 'text-secondaryText hover:text-navy-900'}`}
+                  title="Dusk"
+                >
+                  <Sunset className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => {
+                    setTimeOfDay('night');
+                    showToast('Time of Day: Cyber Night 🌙');
+                  }}
+                  className={`p-1.5 rounded-full cursor-pointer ${timeOfDay === 'night' ? 'bg-indigo-600 text-white' : 'text-secondaryText hover:text-navy-900'}`}
+                  title="Night"
+                >
+                  <Moon className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Left Panel: Layers, Simulation Tools & Camera Presets (270 px) */}
-          <div className="absolute top-16 left-4 z-20 w-[270px] bg-[#13233D]/92 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl p-4 space-y-3 text-[12px] max-h-[calc(100vh-170px)] overflow-y-auto">
-            <div className="flex items-center justify-between pb-2 border-b border-white/10">
-              <span className="font-bold text-white uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-gold-500" />
+          <div className="absolute top-16 left-4 z-20 w-[270px] bg-white/95 backdrop-blur-md rounded-xl border border-border shadow-xl p-4 space-y-3 text-[12px] max-h-[calc(100vh-170px)] overflow-y-auto text-navy-900">
+            <div className="flex items-center justify-between pb-2 border-b border-border">
+              <span className="font-bold text-navy-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-gold-600" />
                 <span>Digital Twin Layers</span>
               </span>
-              <span className="text-[10px] text-emerald-400 font-mono">
+              <span className="text-[10px] text-emerald-700 font-mono font-semibold">
                 {Object.values(layers).filter(Boolean).length} Active
               </span>
             </div>
@@ -1031,29 +1293,29 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
               ].map((item) => (
                 <label
                   key={item.k}
-                  className="flex items-center justify-between py-1 px-1 rounded hover:bg-white/5 cursor-pointer"
+                  className="flex items-center justify-between py-1 px-1 rounded hover:bg-slate-50 cursor-pointer"
                 >
-                  <span className="text-steel-300 text-[11px]">{item.label}</span>
+                  <span className="text-slate-700 text-[11px] font-medium">{item.label}</span>
                   <input
                     type="checkbox"
                     checked={layers[item.k as keyof typeof layers]}
                     onChange={() => toggleLayer(item.k as keyof typeof layers)}
-                    className="rounded text-blue-600 focus:ring-0 bg-white/10 border-white/20"
+                    className="rounded text-blue-600 focus:ring-0 bg-white border-border cursor-pointer"
                   />
                 </label>
               ))}
             </div>
 
             {/* Camera Presets Quick Navigation */}
-            <div className="pt-2 border-t border-white/10 space-y-1.5">
-              <div className="flex items-center justify-between text-[11px] font-bold text-white uppercase tracking-wider">
+            <div className="pt-2 border-t border-border space-y-1.5">
+              <div className="flex items-center justify-between text-[11px] font-bold text-navy-900 uppercase tracking-wider">
                 <span className="flex items-center gap-1">
-                  <Camera className="w-3 h-3 text-cyan-400" />
+                  <Camera className="w-3 h-3 text-blue-600" />
                   <span>Camera Angles</span>
                 </span>
                 <button
                   onClick={handleResetCamera}
-                  className="text-gold-400 text-[10px] hover:underline"
+                  className="text-gold-600 text-[10px] hover:underline cursor-pointer font-bold"
                 >
                   Reset
                 </button>
@@ -1062,25 +1324,25 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
               <div className="grid grid-cols-2 gap-1.5 text-[10px]">
                 <button
                   onClick={() => handleCameraPreset('hero-tower')}
-                  className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-left truncate text-steel-200"
+                  className="p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-left truncate text-navy-900 border border-border cursor-pointer font-medium"
                 >
                   🏢 Hero Tower
                 </button>
                 <button
                   onClick={() => handleCameraPreset('promenade')}
-                  className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-left truncate text-steel-200"
+                  className="p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-left truncate text-navy-900 border border-border cursor-pointer font-medium"
                 >
                   🌊 Promenade
                 </button>
                 <button
                   onClick={() => handleCameraPreset('underground')}
-                  className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-left truncate text-steel-200"
+                  className="p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-left truncate text-navy-900 border border-border cursor-pointer font-medium"
                 >
                   ⚡ Utilities Cut
                 </button>
                 <button
                   onClick={() => handleCameraPreset('island-aerial')}
-                  className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-left truncate text-steel-200"
+                  className="p-1.5 rounded bg-slate-100 hover:bg-slate-200 text-left truncate text-navy-900 border border-border cursor-pointer font-medium"
                 >
                   🛰️ Island Aerial
                 </button>
@@ -1088,8 +1350,8 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
             </div>
 
             {/* Simulation Engines Selector */}
-            <div className="pt-2 border-t border-white/10 space-y-1.5">
-              <span className="text-[11px] font-bold text-white uppercase tracking-wider block">
+            <div className="pt-2 border-t border-border space-y-1.5">
+              <span className="text-[11px] font-bold text-navy-900 uppercase tracking-wider block">
                 Simulation Engines
               </span>
               <div className="space-y-1">
@@ -1099,17 +1361,17 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                     setActiveSimulation(next);
                     showToast(next === 'solar' ? 'Simulating Solar Shadows' : 'Deactivated Solar Simulation');
                   }}
-                  className={`w-full py-1 px-2 rounded text-left flex items-center justify-between text-[11px] font-semibold transition-colors ${
+                  className={`w-full py-1.5 px-2 rounded text-left flex items-center justify-between text-[11px] font-semibold transition-colors cursor-pointer ${
                     activeSimulation === 'solar'
-                      ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                      : 'bg-white/5 text-steel-300 hover:bg-white/10'
+                      ? 'bg-amber-50 text-amber-800 border border-amber-300'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-border'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
-                    <Sun className="w-3.5 h-3.5 text-amber-400" />
+                    <Sun className="w-3.5 h-3.5 text-amber-500" />
                     <span>Solar & Shadow Ray-Trace</span>
                   </span>
-                  <span className="text-[10px]">{activeSimulation === 'solar' ? 'ON' : 'OFF'}</span>
+                  <span className="text-[10px] font-bold">{activeSimulation === 'solar' ? 'ON' : 'OFF'}</span>
                 </button>
 
                 <button
@@ -1118,27 +1380,27 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                     setActiveSimulation(next);
                     showToast(next === 'wind' ? 'Simulating Wind Streamlines' : 'Deactivated Wind Simulation');
                   }}
-                  className={`w-full py-1 px-2 rounded text-left flex items-center justify-between text-[11px] font-semibold transition-colors ${
+                  className={`w-full py-1.5 px-2 rounded text-left flex items-center justify-between text-[11px] font-semibold transition-colors cursor-pointer ${
                     activeSimulation === 'wind'
-                      ? 'bg-sky-500/20 text-sky-300 border border-sky-500/40'
-                      : 'bg-white/5 text-steel-300 hover:bg-white/10'
+                      ? 'bg-sky-50 text-sky-800 border border-sky-300'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-border'
                   }`}
                 >
                   <span className="flex items-center gap-1.5">
-                    <Wind className="w-3.5 h-3.5 text-sky-400" />
+                    <Wind className="w-3.5 h-3.5 text-sky-500" />
                     <span>Microclimate CFD Wind Flow</span>
                   </span>
-                  <span className="text-[10px]">{activeSimulation === 'wind' ? 'ON' : 'OFF'}</span>
+                  <span className="text-[10px] font-bold">{activeSimulation === 'wind' ? 'ON' : 'OFF'}</span>
                 </button>
               </div>
             </div>
 
             {/* Opacity Sliders */}
-            <div className="pt-2 border-t border-white/10 space-y-2">
+            <div className="pt-2 border-t border-border space-y-2">
               <div>
-                <div className="flex justify-between text-[10px] text-steel-400 mb-1">
+                <div className="flex justify-between text-[10px] text-secondaryText mb-1">
                   <span>Mesh Opacity</span>
-                  <span className="font-mono text-white">{buildingOpacity}%</span>
+                  <span className="font-mono text-navy-900 font-bold">{buildingOpacity}%</span>
                 </div>
                 <input
                   type="range"
@@ -1146,14 +1408,14 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                   max="100"
                   value={buildingOpacity}
                   onChange={(e) => setBuildingOpacity(parseInt(e.target.value))}
-                  className="w-full accent-blue-500 h-1 bg-white/20 rounded"
+                  className="w-full accent-blue-600 h-1 bg-slate-200 rounded cursor-pointer"
                 />
               </div>
 
               <div>
-                <div className="flex justify-between text-[10px] text-steel-400 mb-1">
+                <div className="flex justify-between text-[10px] text-secondaryText mb-1">
                   <span>Underground Trench Cut</span>
-                  <span className="font-mono text-white">{utilityDepth}%</span>
+                  <span className="font-mono text-navy-900 font-bold">{utilityDepth}%</span>
                 </div>
                 <input
                   type="range"
@@ -1161,79 +1423,79 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                   max="100"
                   value={utilityDepth}
                   onChange={(e) => setUtilityDepth(parseInt(e.target.value))}
-                  className="w-full accent-gold-500 h-1 bg-white/20 rounded"
+                  className="w-full accent-gold-500 h-1 bg-slate-200 rounded cursor-pointer"
                 />
               </div>
             </div>
           </div>
 
           {/* Right Panel: Asset Inspector & Live Telemetry (320 px) */}
-          <div className="absolute top-16 right-4 z-20 w-[320px] bg-[#13233D]/92 backdrop-blur-md rounded-xl border border-white/10 shadow-2xl p-4 flex flex-col justify-between space-y-3.5 text-[12px] max-h-[calc(100vh-170px)] overflow-y-auto">
+          <div className="absolute top-16 right-4 z-20 w-[320px] bg-white/95 backdrop-blur-md rounded-xl border border-border shadow-xl p-4 flex flex-col justify-between space-y-3.5 text-[12px] max-h-[calc(100vh-170px)] overflow-y-auto text-navy-900">
             <div className="space-y-3">
               {/* Header */}
-              <div className="flex items-center justify-between pb-2 border-b border-white/10">
+              <div className="flex items-center justify-between pb-2 border-b border-border">
                 <div>
-                  <span className="text-[10px] font-mono text-gold-500 font-bold uppercase tracking-wider">
+                  <span className="text-[10px] font-mono text-gold-600 font-bold uppercase tracking-wider">
                     Selected 3D Asset
                   </span>
-                  <h3 className="text-[15px] font-bold text-white tracking-tight leading-snug">
+                  <h3 className="text-[15px] font-bold text-navy-900 tracking-tight leading-snug">
                     {selectedAsset.name}
                   </h3>
                 </div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex-shrink-0">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 flex-shrink-0">
                   {selectedAsset.lod}
                 </span>
               </div>
 
               {/* Key Asset Specs */}
               <div className="grid grid-cols-2 gap-2 text-[11px]">
-                <div className="p-2 rounded bg-white/5 border border-white/5">
-                  <div className="text-steel-400 text-[10px]">Height (AGL)</div>
-                  <div className="font-bold text-white font-mono">
+                <div className="p-2 rounded bg-slate-50 border border-border">
+                  <div className="text-secondaryText text-[10px]">Height (AGL)</div>
+                  <div className="font-bold text-navy-900 font-mono">
                     {selectedAsset.height} ({selectedAsset.floors} Floors)
                   </div>
                 </div>
-                <div className="p-2 rounded bg-white/5 border border-white/5">
-                  <div className="text-steel-400 text-[10px]">Primary Use</div>
-                  <div className="font-bold text-white truncate">{selectedAsset.use}</div>
+                <div className="p-2 rounded bg-slate-50 border border-border">
+                  <div className="text-secondaryText text-[10px]">Primary Use</div>
+                  <div className="font-bold text-navy-900 truncate">{selectedAsset.use}</div>
                 </div>
-                <div className="p-2 rounded bg-white/5 border border-white/5">
-                  <div className="text-steel-400 text-[10px]">Real-Time Power</div>
-                  <div className="font-bold text-emerald-400 font-mono flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <div className="p-2 rounded bg-slate-50 border border-border">
+                  <div className="text-secondaryText text-[10px]">Real-Time Power</div>
+                  <div className="font-bold text-emerald-700 font-mono flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     <span>{selectedAsset.power}</span>
                   </div>
                 </div>
-                <div className="p-2 rounded bg-white/5 border border-white/5">
-                  <div className="text-steel-400 text-[10px]">Current Occupancy</div>
-                  <div className="font-bold text-white font-mono">{selectedAsset.occupancy}</div>
+                <div className="p-2 rounded bg-slate-50 border border-border">
+                  <div className="text-secondaryText text-[10px]">Current Occupancy</div>
+                  <div className="font-bold text-navy-900 font-mono">{selectedAsset.occupancy}</div>
                 </div>
               </div>
 
               {/* BIM Model Linked Action */}
-              <div className="p-2.5 rounded bg-blue-900/30 border border-blue-500/30 flex items-center justify-between text-[11px]">
+              <div className="p-2.5 rounded bg-blue-50 border border-blue-200 flex items-center justify-between text-[11px]">
                 <div>
-                  <div className="font-bold text-white">BIM IFC Model Connected</div>
-                  <div className="text-[10px] text-steel-400">
+                  <div className="font-bold text-navy-900">BIM IFC Model Connected</div>
+                  <div className="text-[10px] text-secondaryText">
                     Revit 2027 · {selectedAsset.bimObjects} objects
                   </div>
                 </div>
                 <button
                   onClick={() => setShowBimModal(true)}
-                  className="px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[10px] transition-colors"
+                  className="px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[10px] transition-colors cursor-pointer shadow-xs"
                 >
                   Inspect BIM
                 </button>
               </div>
 
               {/* Live Sensor Telemetry Strip */}
-              <div className="p-2.5 rounded bg-white/5 border border-white/5 space-y-1.5">
+              <div className="p-2.5 rounded bg-slate-50 border border-border space-y-1.5">
                 <div className="flex items-center justify-between text-[10px]">
-                  <span className="text-steel-400 font-bold flex items-center gap-1">
-                    <Radio className="w-3 h-3 text-cyan-400" />
+                  <span className="text-secondaryText font-bold flex items-center gap-1">
+                    <Radio className="w-3 h-3 text-blue-600" />
                     <span>Live IoT Stream: {selectedSensor.id}</span>
                   </span>
-                  <span className="text-emerald-400 font-bold font-mono">
+                  <span className="text-emerald-700 font-bold font-mono">
                     {selectedSensor.val}
                   </span>
                 </div>
@@ -1241,7 +1503,7 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                 <svg viewBox="0 0 260 35" className="w-full h-7 overflow-visible">
                   <polyline
                     fill="none"
-                    stroke="#2BA6DE"
+                    stroke="#1F5FAD"
                     strokeWidth="2"
                     points="0,22 30,19 60,25 90,17 120,15 150,20 180,12 210,16 240,14 260,15"
                   />
@@ -1250,11 +1512,11 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                     y1="18"
                     x2="260"
                     y2="18"
-                    stroke="rgba(255,255,255,0.15)"
+                    stroke="rgba(0,0,0,0.1)"
                     strokeDasharray="2 2"
                   />
                 </svg>
-                <div className="flex justify-between text-[9px] text-steel-500 font-mono">
+                <div className="flex justify-between text-[9px] text-secondaryText font-mono">
                   <span>24 hrs ago</span>
                   <span>Owner: {selectedSensor.owner}</span>
                   <span>Now (Live)</span>
@@ -1263,19 +1525,19 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
             </div>
 
             {/* Asset Actions */}
-            <div className="pt-2 border-t border-white/10 space-y-1.5">
+            <div className="pt-2 border-t border-border space-y-1.5">
               <button
                 onClick={() => setShowSolarModal(true)}
-                className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-[12px] transition-colors flex items-center justify-center gap-1.5"
+                className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-[12px] transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <Sun className="w-3.5 h-3.5" />
                 <span>Run Solar & Shadow Analysis</span>
               </button>
               <button
                 onClick={() => setShowScenarioModal(true)}
-                className="w-full py-1.5 bg-white/5 hover:bg-white/10 text-steel-300 rounded-lg font-medium text-[11px] transition-colors flex items-center justify-center gap-1.5"
+                className="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-navy-900 border border-border rounded-lg font-medium text-[11px] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <SlidersHorizontal className="w-3 h-3" />
+                <SlidersHorizontal className="w-3 h-3 text-steel-500" />
                 <span>Compare Scenarios A/B</span>
               </button>
             </div>
@@ -1284,43 +1546,43 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
           {/* Active Sensor Tooltip Floating Over Map */}
           {showSensorTooltip && (
             <div
-              className="absolute z-30 bg-[#0B2545]/95 backdrop-blur-md text-white p-3 rounded-xl border border-cyan-400 shadow-2xl text-left text-[11px] font-mono pointer-events-auto"
+              className="absolute z-30 bg-white/95 backdrop-blur-md text-navy-900 p-3 rounded-xl border border-border shadow-xl text-left text-[11px] font-mono pointer-events-auto"
               style={{ top: `${selectedSensor.y - 70}px`, left: `${selectedSensor.x - 60}px` }}
             >
               <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-1.5 text-cyan-300 font-bold">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <div className="flex items-center gap-1.5 text-blue-700 font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
                   <span>{selectedSensor.id} · {selectedSensor.type}</span>
                 </div>
                 <button
                   onClick={() => setShowSensorTooltip(false)}
-                  className="text-steel-400 hover:text-white"
+                  className="text-secondaryText hover:text-navy-900 cursor-pointer"
                 >
                   <X className="w-3 h-3" />
                 </button>
               </div>
-              <div className="text-white mt-1">
-                Reading: <strong className="text-emerald-400">{selectedSensor.val}</strong>
+              <div className="text-navy-900 mt-1">
+                Reading: <strong className="text-emerald-700 font-bold">{selectedSensor.val}</strong>
               </div>
-              <div className="text-[10px] text-steel-400 mt-0.5">
+              <div className="text-[10px] text-secondaryText mt-0.5">
                 Authority: {selectedSensor.owner} · Status: {selectedSensor.status}
               </div>
             </div>
           )}
 
           {/* Bottom Left Live Status Pill */}
-          <div className="absolute bottom-20 left-4 z-20 bg-[#13233D]/90 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/10 text-[11px] font-mono text-emerald-400 flex items-center gap-2 shadow-lg">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="absolute bottom-20 left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-xl border border-border text-[11px] font-mono text-emerald-700 font-semibold flex items-center gap-2 shadow-md">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>48 / 48 IoT sensor feeds active · Low latency &lt;120ms</span>
           </div>
 
           {/* Bottom Right: Zoom & Reset Controls */}
-          <div className="absolute bottom-20 right-4 z-20 flex flex-col gap-1.5 bg-[#13233D]/90 backdrop-blur-md p-1 rounded-xl border border-white/10 shadow-lg">
+          <div className="absolute bottom-20 right-4 z-20 flex flex-col gap-1.5 bg-white/95 backdrop-blur-md p-1 rounded-xl border border-border shadow-md">
             <button
               onClick={() => {
                 setCameraAngle((prev) => ({ ...prev, zoom: Math.min(1.8, prev.zoom + 0.15) }));
               }}
-              className="p-1.5 hover:bg-white/10 rounded text-steel-400 hover:text-white"
+              className="p-1.5 hover:bg-slate-100 rounded text-slate-700 cursor-pointer"
               title="Zoom In"
             >
               <ZoomIn className="w-4 h-4" />
@@ -1329,14 +1591,14 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
               onClick={() => {
                 setCameraAngle((prev) => ({ ...prev, zoom: Math.max(0.7, prev.zoom - 0.15) }));
               }}
-              className="p-1.5 hover:bg-white/10 rounded text-steel-400 hover:text-white"
+              className="p-1.5 hover:bg-slate-100 rounded text-slate-700 cursor-pointer"
               title="Zoom Out"
             >
               <ZoomOut className="w-4 h-4" />
             </button>
             <button
               onClick={handleResetCamera}
-              className="p-1.5 hover:bg-white/10 rounded text-gold-500"
+              className="p-1.5 hover:bg-slate-100 rounded text-gold-600 cursor-pointer"
               title="Reset North & Angle"
             >
               <Compass className="w-4 h-4" />
@@ -1344,11 +1606,11 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
           </div>
 
           {/* Bottom 4D Urban Timeline Scrubber (64 px tall) */}
-          <div className="absolute bottom-0 left-0 right-0 h-[64px] bg-[#0B182B]/95 backdrop-blur-md border-t border-white/10 px-8 flex items-center justify-between z-30">
+          <div className="absolute bottom-0 left-0 right-0 h-[64px] bg-white/95 backdrop-blur-md border-t border-border px-8 flex items-center justify-between z-30 shadow-level-2">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="w-9 h-9 rounded-full bg-gold-500 hover:bg-gold-600 text-navy-900 flex items-center justify-center font-bold shadow-md transition-transform active:scale-95"
+                className="w-9 h-9 rounded-full bg-gold-500 hover:bg-gold-600 text-navy-900 flex items-center justify-center font-bold shadow-md transition-transform active:scale-95 cursor-pointer"
               >
                 {isPlaying ? (
                   <Pause className="w-4 h-4 fill-navy-900" />
@@ -1357,8 +1619,8 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                 )}
               </button>
 
-              <div className="text-[12px] font-bold text-white font-mono">
-                4D Urban Timeline · <span className="text-gold-400 font-bold">{timelineYear}</span>
+              <div className="text-[12px] font-bold text-navy-900 font-mono">
+                4D Urban Timeline · <span className="text-gold-600 font-bold">{timelineYear}</span>
               </div>
             </div>
 
@@ -1372,42 +1634,42 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
                   step="1"
                   value={timelineYear}
                   onChange={(e) => setTimelineYear(parseInt(e.target.value))}
-                  className="w-full accent-gold-500 h-2 bg-navy-800 rounded-lg cursor-pointer"
+                  className="w-full accent-gold-500 h-2 bg-slate-200 rounded-lg cursor-pointer"
                 />
               </div>
 
               {/* Ticks and Milestones */}
-              <div className="flex justify-between text-[10px] text-steel-400 font-mono mt-1 relative">
+              <div className="flex justify-between text-[10px] text-secondaryText font-mono mt-1 relative">
                 <span>2020</span>
                 <span>2022</span>
                 <span>2024</span>
                 <span
                   className={`${
-                    timelineYear === 2027 ? 'text-gold-500 font-bold border-b border-gold-500' : ''
+                    timelineYear === 2027 ? 'text-gold-600 font-bold border-b-2 border-gold-500' : ''
                   }`}
                 >
                   Now · Sep 2027
                 </span>
-                <span className="border-b border-dashed border-steel-500 text-steel-400">
+                <span className="border-b border-dashed border-slate-300 text-secondaryText">
                   2030 Net-Zero
                 </span>
-                <span className="border-b border-dashed border-steel-500 text-steel-400">
+                <span className="border-b border-dashed border-slate-300 text-secondaryText">
                   2035 Vision
                 </span>
               </div>
             </div>
 
             {/* Timeline Speed Multipliers */}
-            <div className="flex items-center gap-1.5 text-[11px] font-mono text-steel-400">
+            <div className="flex items-center gap-1.5 text-[11px] font-mono text-secondaryText">
               <span>Speed:</span>
               {([1, 2, 4] as const).map((spd) => (
                 <button
                   key={spd}
                   onClick={() => setPlaybackSpeed(spd)}
-                  className={`px-2 py-0.5 rounded font-bold transition-all ${
+                  className={`px-2 py-0.5 rounded font-bold transition-all cursor-pointer ${
                     playbackSpeed === spd
-                      ? 'bg-gold-500 text-navy-900'
-                      : 'bg-white/10 text-white hover:bg-white/20'
+                      ? 'bg-gold-500 text-navy-900 font-bold'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-border'
                   }`}
                 >
                   {spd}×
@@ -1419,24 +1681,24 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
       </div>
 
       {/* Micro Footer */}
-      <MicroFooter isDarkTheme={true} />
+      <MicroFooter isDarkTheme={false} />
 
       {/* MODAL 1: BIM IFC Cross-Section Explorer */}
       {showBimModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-[620px] bg-[#0E1E34] border border-cyan-500/40 rounded-2xl p-6 shadow-2xl space-y-4 text-white">
-            <div className="flex items-start justify-between border-b border-white/10 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-[620px] bg-white border border-border rounded-2xl p-6 shadow-2xl space-y-4 text-navy-900">
+            <div className="flex items-start justify-between border-b border-border pb-3">
               <div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/20 text-cyan-300">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                   IFC 4.3 Schema · Federated Model
                 </span>
-                <h3 className="text-[18px] font-bold text-white mt-1">
+                <h3 className="text-[18px] font-bold text-navy-900 mt-1">
                   BIM Hierarchy: {selectedAsset.name}
                 </h3>
               </div>
               <button
                 onClick={() => setShowBimModal(false)}
-                className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-steel-400"
+                className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1444,48 +1706,48 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
 
             <div className="space-y-3 text-[12px]">
               <div className="grid grid-cols-3 gap-2 text-center font-mono">
-                <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
-                  <div className="text-[10px] text-steel-400">Total IFC Entities</div>
-                  <div className="text-[16px] font-bold text-cyan-400">4,820</div>
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-border">
+                  <div className="text-[10px] text-secondaryText">Total IFC Entities</div>
+                  <div className="text-[16px] font-bold text-blue-600">4,820</div>
                 </div>
-                <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
-                  <div className="text-[10px] text-steel-400">MEP Ducting Clashes</div>
-                  <div className="text-[16px] font-bold text-emerald-400">0 (Resolved)</div>
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-border">
+                  <div className="text-[10px] text-secondaryText">MEP Ducting Clashes</div>
+                  <div className="text-[16px] font-bold text-emerald-600">0 (Resolved)</div>
                 </div>
-                <div className="p-2.5 rounded-xl bg-white/5 border border-white/10">
-                  <div className="text-[10px] text-steel-400">Sovereign Asset ID</div>
-                  <div className="text-[13px] font-bold text-gold-400">AD-BIM-9912</div>
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-border">
+                  <div className="text-[10px] text-secondaryText">Sovereign Asset ID</div>
+                  <div className="text-[13px] font-bold text-amber-600">AD-BIM-9912</div>
                 </div>
               </div>
 
-              <div className="p-3 bg-black/40 rounded-xl border border-white/10 space-y-2">
-                <div className="font-bold text-white text-[11px] uppercase tracking-wider">
+              <div className="p-3 bg-slate-50 rounded-xl border border-border space-y-2">
+                <div className="font-bold text-navy-900 text-[11px] uppercase tracking-wider">
                   Connected Sub-Systems:
                 </div>
-                <ul className="space-y-1.5 text-[11px] text-steel-300">
+                <ul className="space-y-1.5 text-[11px] text-slate-700">
                   <li className="flex items-center justify-between">
                     <span>• HVAC Air Handling Units (VAV Rooftop)</span>
-                    <span className="text-emerald-400 font-mono">Normal · 98.4% Efficiency</span>
+                    <span className="text-emerald-700 font-mono font-medium">Normal · 98.4% Efficiency</span>
                   </li>
                   <li className="flex items-center justify-between">
                     <span>• Smart District Chilled Water Exchange</span>
-                    <span className="text-emerald-400 font-mono">Inflow 6.2°C · Delta T 8.4°C</span>
+                    <span className="text-emerald-700 font-mono font-medium">Inflow 6.2°C · Delta T 8.4°C</span>
                   </li>
                   <li className="flex items-center justify-between">
                     <span>• Dual Power Redundant Transformer Bus</span>
-                    <span className="text-emerald-400 font-mono">Load 1,240 kW · PF 0.96</span>
+                    <span className="text-emerald-700 font-mono font-medium">Load 1,240 kW · PF 0.96</span>
                   </li>
                 </ul>
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-white/10">
+            <div className="flex justify-end gap-2 pt-2 border-t border-border">
               <button
                 onClick={() => {
                   showToast('Exported complete IFC 4.3 BIM dataset');
                   setShowBimModal(false);
                 }}
-                className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-bold text-[12px] transition-colors"
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-[12px] shadow-sm transition-colors"
               >
                 Export IFC File
               </button>
@@ -1496,51 +1758,51 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
 
       {/* MODAL 2: Solar & Shadow Simulation Report */}
       {showSolarModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-[520px] bg-[#0E1E34] border border-amber-500/40 rounded-2xl p-6 shadow-2xl space-y-4 text-white">
-            <div className="flex items-start justify-between border-b border-white/10 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-[520px] bg-white border border-border rounded-2xl p-6 shadow-2xl space-y-4 text-navy-900">
+            <div className="flex items-start justify-between border-b border-border pb-3">
               <div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
                   Solar Radiance & Shadow Analysis
                 </span>
-                <h3 className="text-[18px] font-bold text-white mt-1">
+                <h3 className="text-[18px] font-bold text-navy-900 mt-1">
                   Solar Exposure Compliance Report
                 </h3>
               </div>
               <button
                 onClick={() => setShowSolarModal(false)}
-                className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-steel-400"
+                className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-3 text-[12px]">
-              <p className="text-steel-300">
+              <p className="text-slate-600">
                 Calculated diurnal solar irradiation for Waterfront District across winter and summer solstices:
               </p>
 
               <div className="grid grid-cols-2 gap-3 font-mono">
-                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
-                  <span className="text-[10px] text-steel-400 block">Annual Solar Insolation</span>
-                  <span className="text-[18px] font-bold text-amber-400">2,140 kWh/m²</span>
-                  <span className="text-[10px] text-emerald-400 block mt-1">+14% above threshold</span>
+                <div className="p-3 bg-slate-50 rounded-xl border border-border">
+                  <span className="text-[10px] text-secondaryText block">Annual Solar Insolation</span>
+                  <span className="text-[18px] font-bold text-amber-600">2,140 kWh/m²</span>
+                  <span className="text-[10px] text-emerald-600 block mt-1 font-medium">+14% above threshold</span>
                 </div>
-                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
-                  <span className="text-[10px] text-steel-400 block">Pedestrian Shadow Buffer</span>
-                  <span className="text-[18px] font-bold text-white">4.2 Hours</span>
-                  <span className="text-[10px] text-cyan-300 block mt-1">Meets ESTIDAMA Pearl 4</span>
+                <div className="p-3 bg-slate-50 rounded-xl border border-border">
+                  <span className="text-[10px] text-secondaryText block">Pedestrian Shadow Buffer</span>
+                  <span className="text-[18px] font-bold text-navy-900">4.2 Hours</span>
+                  <span className="text-[10px] text-blue-600 block mt-1 font-medium">Meets ESTIDAMA Pearl 4</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-white/10">
+            <div className="flex justify-end gap-2 pt-2 border-t border-border">
               <button
                 onClick={() => {
                   showToast('Downloaded ESTIDAMA Solar Compliance Report (PDF)');
                   setShowSolarModal(false);
                 }}
-                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold text-[12px] transition-colors"
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-[12px] shadow-sm transition-colors"
               >
                 Download PDF Report
               </button>
@@ -1551,70 +1813,70 @@ export const S10_DigitalTwin3d: React.FC<S10Props> = ({ onNavigate }) => {
 
       {/* MODAL 3: Scenarios Side-by-Side Comparison */}
       {showScenarioModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-[640px] bg-[#0E1E34] border border-white/20 rounded-2xl p-6 shadow-2xl space-y-4 text-white">
-            <div className="flex items-start justify-between border-b border-white/10 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-[640px] bg-white border border-border rounded-2xl p-6 shadow-2xl space-y-4 text-navy-900">
+            <div className="flex items-start justify-between border-b border-border pb-3">
               <div>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300">
+                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                   Urban Masterplan Delta
                 </span>
-                <h3 className="text-[18px] font-bold text-white mt-1">
+                <h3 className="text-[18px] font-bold text-navy-900 mt-1">
                   Scenario A vs Scenario B Comparison
                 </h3>
               </div>
               <button
                 onClick={() => setShowScenarioModal(false)}
-                className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-steel-400"
+                className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <table className="w-full text-left text-[12px]">
-              <thead className="border-b border-white/10 text-steel-400 uppercase text-[10px]">
+              <thead className="border-b border-border text-secondaryText uppercase text-[10px]">
                 <tr>
                   <th className="py-2">Metric</th>
                   <th className="py-2">Scenario A (Approved 2027)</th>
-                  <th className="py-2 text-emerald-400">Scenario B (Net-Zero 2030)</th>
+                  <th className="py-2 text-emerald-700">Scenario B (Net-Zero 2030)</th>
                   <th className="py-2 text-right">Delta</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 font-mono">
+              <tbody className="divide-y divide-slate-100 font-mono">
                 <tr>
-                  <td className="py-2.5 text-white font-sans">Gross Floor Area (GFA)</td>
-                  <td className="py-2.5 text-steel-300">420,000 m²</td>
-                  <td className="py-2.5 text-white">465,000 m²</td>
-                  <td className="py-2.5 text-right text-emerald-400">+10.7%</td>
+                  <td className="py-2.5 text-navy-900 font-sans font-medium">Gross Floor Area (GFA)</td>
+                  <td className="py-2.5 text-slate-600">420,000 m²</td>
+                  <td className="py-2.5 text-navy-900 font-semibold">465,000 m²</td>
+                  <td className="py-2.5 text-right text-emerald-600 font-bold">+10.7%</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 text-white font-sans">Renewable Generation</td>
-                  <td className="py-2.5 text-steel-300">12 GWh / yr</td>
-                  <td className="py-2.5 text-white">54 GWh / yr</td>
-                  <td className="py-2.5 text-right text-emerald-400">+350%</td>
+                  <td className="py-2.5 text-navy-900 font-sans font-medium">Renewable Generation</td>
+                  <td className="py-2.5 text-slate-600">12 GWh / yr</td>
+                  <td className="py-2.5 text-navy-900 font-semibold">54 GWh / yr</td>
+                  <td className="py-2.5 text-right text-emerald-600 font-bold">+350%</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 text-white font-sans">Carbon Footprint</td>
-                  <td className="py-2.5 text-steel-300">142 kg CO₂/m²</td>
-                  <td className="py-2.5 text-white">48 kg CO₂/m²</td>
-                  <td className="py-2.5 text-right text-emerald-400">-66.2%</td>
+                  <td className="py-2.5 text-navy-900 font-sans font-medium">Carbon Footprint</td>
+                  <td className="py-2.5 text-slate-600">142 kg CO₂/m²</td>
+                  <td className="py-2.5 text-navy-900 font-semibold">48 kg CO₂/m²</td>
+                  <td className="py-2.5 text-right text-emerald-600 font-bold">-66.2%</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 text-white font-sans">Public Open Space</td>
-                  <td className="py-2.5 text-steel-300">28% Coverage</td>
-                  <td className="py-2.5 text-white">38% Coverage</td>
-                  <td className="py-2.5 text-right text-emerald-400">+10.0%</td>
+                  <td className="py-2.5 text-navy-900 font-sans font-medium">Public Open Space</td>
+                  <td className="py-2.5 text-slate-600">28% Coverage</td>
+                  <td className="py-2.5 text-navy-900 font-semibold">38% Coverage</td>
+                  <td className="py-2.5 text-right text-emerald-600 font-bold">+10.0%</td>
                 </tr>
               </tbody>
             </table>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-white/10">
+            <div className="flex justify-end gap-2 pt-2 border-t border-border">
               <button
                 onClick={() => {
                   setActiveScenario('B');
                   showToast('Adopted Scenario B into working session');
                   setShowScenarioModal(false);
                 }}
-                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[12px] transition-colors"
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[12px] shadow-sm transition-colors"
               >
                 Apply Scenario B to 3D Twin
               </button>

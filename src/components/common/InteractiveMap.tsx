@@ -156,15 +156,39 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
     return () => document.removeEventListener('fullscreenchange', handleFsChange);
   }, [isFullscreen, onToggleFullscreen]);
 
+  // Handle Escape key for exiting fullscreen in all modes (native & viewport fallback)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && effectiveFullscreen) {
+        if (document.fullscreenElement) {
+          if (document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+          } else if ((document as any).webkitExitFullscreen) {
+            (document as any).webkitExitFullscreen();
+          }
+        }
+        if (isFullscreen !== undefined && onToggleFullscreen) {
+          onToggleFullscreen();
+        } else {
+          setInternalFullscreen(false);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [effectiveFullscreen, isFullscreen, onToggleFullscreen]);
+
   // When fullscreen changes or window resizes, invalidate Leaflet map dimensions
   useEffect(() => {
     const t1 = setTimeout(() => mapInstanceRef.current?.invalidateSize(), 50);
-    const t2 = setTimeout(() => mapInstanceRef.current?.invalidateSize(), 200);
-    const t3 = setTimeout(() => mapInstanceRef.current?.invalidateSize(), 400);
+    const t2 = setTimeout(() => mapInstanceRef.current?.invalidateSize(), 150);
+    const t3 = setTimeout(() => mapInstanceRef.current?.invalidateSize(), 300);
+    const t4 = setTimeout(() => mapInstanceRef.current?.invalidateSize(), 600);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
+      clearTimeout(t4);
     };
   }, [effectiveFullscreen]);
 
@@ -622,7 +646,14 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
   };
 
   return (
-    <div ref={rootContainerRef} className={`relative w-full h-full overflow-hidden select-none bg-slate-900 ${className}`}>
+    <div
+      ref={rootContainerRef}
+      className={`select-none bg-slate-900 ${
+        effectiveFullscreen && !isFullscreen && !document.fullscreenElement
+          ? 'fixed inset-0 z-[9999] w-screen h-screen'
+          : 'relative w-full h-full overflow-hidden'
+      } ${className}`}
+    >
       {/* Real Map Canvas DOM */}
       <div ref={mapContainerRef} className="w-full h-full z-0" />
 

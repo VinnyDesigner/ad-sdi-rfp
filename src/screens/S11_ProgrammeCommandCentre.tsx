@@ -245,7 +245,7 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
   };
 
   return (
-    <div className="w-full h-screen bg-[#0A1628] text-white flex flex-col justify-between overflow-hidden select-none font-sans">
+    <div className="w-full h-screen bg-canvas text-primaryText flex flex-col justify-between overflow-hidden select-none font-sans">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-20 right-8 z-50 bg-navy-900 text-white px-5 py-3 rounded-xl shadow-2xl border border-gold-500/50 flex items-center gap-3 animate-bounce">
@@ -258,30 +258,30 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
       <HeaderWorkspace currentScreen="S11_ProgrammeCommandCentre" onNavigate={onNavigate} />
 
       <div className="flex-1 flex overflow-hidden">
-        {/* 2. Workspace Sidebar (Dark variant) */}
+        {/* 2. Workspace Sidebar (Light variant) */}
         <SidebarWorkspace
           currentScreen="S11_ProgrammeCommandCentre"
           onNavigate={onNavigate}
-          isDarkTheme={true}
+          isDarkTheme={false}
         />
 
         {/* 3. Main Operational Command Dashboard */}
-        <div className="flex-1 flex flex-col justify-between overflow-hidden bg-[#0A1628]">
+        <div className="flex-1 flex flex-col justify-between overflow-hidden bg-canvas">
           {/* Header */}
-          <div className="px-8 pt-4 pb-2 bg-[#0E1E34] border-b border-white/10 space-y-2">
+          <div className="px-8 pt-4 pb-2 bg-white border-b border-border shadow-2xs space-y-2">
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-3">
-                  <h1 className="text-[22px] font-bold text-white tracking-tight">
+                  <h1 className="text-[22px] font-bold text-navy-900 tracking-tight">
                     AD-SDI Implementation Programme 2026–2029
                   </h1>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                     On track
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-white/10 text-steel-400">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-secondaryText border border-border">
                     Baseline schedule
                   </span>
-                  <span className="text-[11px] font-mono text-steel-400">
+                  <span className="text-[11px] font-mono text-secondaryText">
                     Updated 14 Sep 2027, 09:30 GST
                   </span>
                 </div>
@@ -292,15 +292,15 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                     <button
                       key={ci}
                       onClick={() => setActiveCadence(c.name)}
-                      className={`px-2.5 py-0.5 rounded-full text-[11px] border transition-all flex items-center gap-1.5 ${
+                      className={`px-2.5 py-0.5 rounded-full text-[11px] border transition-all flex items-center gap-1.5 cursor-pointer ${
                         activeCadence === c.name
-                          ? 'bg-gold-500/20 border-gold-500 text-gold-300'
-                          : 'bg-white/5 border-white/10 text-steel-300 hover:bg-white/10'
+                          ? 'bg-gold-500/15 border-gold-500 text-gold-700 font-bold'
+                          : 'bg-slate-50 border-border text-secondaryText hover:bg-slate-100'
                       }`}
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-gold-500" />
                       <span>{c.name}:</span>
-                      <strong className="text-white font-mono">{c.freq}</strong>
+                      <strong className="text-navy-900 font-mono">{c.freq}</strong>
                     </button>
                   ))}
                 </div>
@@ -310,14 +310,14 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
               <div className="flex items-center gap-2.5">
                 <button
                   onClick={handleExportGateReviewPack}
-                  className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-white text-[12px] font-medium border border-white/10 flex items-center gap-1.5 transition-colors"
+                  className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-navy-900 text-[12px] font-medium border border-border flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  <FileText className="w-3.5 h-3.5 text-steel-400" />
+                  <FileText className="w-3.5 h-3.5 text-steel-500" />
                   <span>Gate review pack</span>
                 </button>
                 <button
                   onClick={handleExportMonthlyReport}
-                  className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-semibold flex items-center gap-1.5 shadow-sm transition-colors"
+                  className="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-semibold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />
                   <span>Monthly report</span>
@@ -328,9 +328,9 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
 
           {/* Active Cadence Modal/Pill if selected */}
           {activeCadence && (
-            <div className="mx-8 mt-2 p-2 rounded-lg bg-blue-900/40 border border-blue-500/40 flex items-center justify-between text-[11px] text-white">
+            <div className="mx-8 mt-2 p-2 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-between text-[11px] text-navy-900">
               <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-blue-400" />
+                <Info className="w-4 h-4 text-blue-600" />
                 <span>
                   <strong>{activeCadence}:</strong> Next session:{' '}
                   {cadenceChips.find((c) => c.name === activeCadence)?.next} · Chair:{' '}
@@ -339,7 +339,7 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
               </div>
               <button
                 onClick={() => setActiveCadence(null)}
-                className="text-steel-400 hover:text-white"
+                className="text-secondaryText hover:text-navy-900 cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -351,31 +351,31 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
             {kpis.map((kpi, idx) => (
               <div
                 key={idx}
-                className="bg-[#13233D] rounded-xl border border-white/10 p-3 flex flex-col justify-between shadow-dark-level-1 hover:border-white/20 transition-colors"
+                className="bg-white rounded-xl border border-border p-3.5 flex flex-col justify-between shadow-level-1 hover:border-blue-300 transition-colors"
               >
-                <div className="text-[11px] font-semibold text-steel-400 uppercase tracking-wider">
+                <div className="text-[11px] font-semibold text-secondaryText uppercase tracking-wider">
                   {kpi.label}
                 </div>
-                <div className={`text-[26px] font-bold font-mono tabular-nums tracking-tight ${kpi.color}`}>
+                <div className={`text-[26px] font-bold font-mono tabular-nums tracking-tight ${kpi.color.replace('text-white', 'text-navy-900')}`}>
                   {kpi.val}
                 </div>
-                <div className="text-[10px] text-steel-400 font-medium">{kpi.sub}</div>
+                <div className="text-[10px] text-secondaryText font-medium">{kpi.sub}</div>
               </div>
             ))}
           </div>
 
           {/* Row 2: Programme Multi-Lane Gantt Roadmap (260 px tall per spec) */}
           <div className="px-8 pt-3">
-            <div className="h-[250px] bg-[#13233D] rounded-xl border border-white/10 shadow-dark-level-1 p-3.5 flex flex-col justify-between relative overflow-hidden">
+            <div className="h-[250px] bg-white rounded-xl border border-border shadow-level-1 p-3.5 flex flex-col justify-between relative overflow-hidden">
               {/* Roadmap Header & Time Axis */}
-              <div className="flex items-center justify-between text-[11px] pb-1 border-b border-white/10">
-                <span className="font-bold text-white uppercase tracking-wider">
+              <div className="flex items-center justify-between text-[11px] pb-1 border-b border-border">
+                <span className="font-bold text-navy-900 uppercase tracking-wider">
                   Master Programme Roadmap (2026–2029) · Click any deliverable to inspect
                 </span>
                 {/* Quarters axis */}
-                <div className="flex items-center gap-8 font-mono text-[10px] text-steel-400">
+                <div className="flex items-center gap-8 font-mono text-[10px] text-secondaryText">
                   <span>Phase 1 (Q3 26 – Q1 27)</span>
-                  <span className="text-white font-bold">Phase 2: Core Platform (Q2 27 – Q4 27)</span>
+                  <span className="text-blue-600 font-bold">Phase 2: Core Platform (Q2 27 – Q4 27)</span>
                   <span>Phase 3: Rollout (2028)</span>
                   <span>Phase 4: Full Sovereign Ops (2029)</span>
                 </div>
@@ -385,18 +385,18 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
               <div className="relative flex-1 py-1">
                 <svg viewBox="0 0 1060 170" className="w-full h-full overflow-visible">
                   {/* Phase background bands */}
-                  <rect x="180" y="0" width="220" height="170" fill="rgba(255,255,255,0.02)" />
-                  <rect x="400" y="0" width="240" height="170" fill="rgba(31,95,173,0.06)" />
-                  <rect x="640" y="0" width="220" height="170" fill="rgba(255,255,255,0.02)" />
-                  <rect x="860" y="0" width="200" height="170" fill="rgba(255,255,255,0.04)" />
+                  <rect x="180" y="0" width="220" height="170" fill="#F8FAFC" />
+                  <rect x="400" y="0" width="240" height="170" fill="#EFF6FF" />
+                  <rect x="640" y="0" width="220" height="170" fill="#F8FAFC" />
+                  <rect x="860" y="0" width="200" height="170" fill="#F1F5F9" />
 
                   {/* Vertical Today Line at Sep 2027 (x=510) per spec */}
-                  <line x1="510" y1="0" x2="510" y2="170" stroke="#FFC20E" strokeWidth="2" />
-                  <polygon points="505,0 515,0 510,7" fill="#FFC20E" />
+                  <line x1="510" y1="0" x2="510" y2="170" stroke="#D97706" strokeWidth="2" />
+                  <polygon points="505,0 515,0 510,7" fill="#D97706" />
                   <text
                     x="510"
                     y="166"
-                    fill="#FFC20E"
+                    fill="#D97706"
                     fontSize="9"
                     fontWeight="bold"
                     textAnchor="middle"
@@ -412,7 +412,7 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                     return (
                       <g key={lane.code}>
                         {/* Lane Label */}
-                        <text x="10" y={y + 11} fill="#7A9CC6" fontSize="10" fontWeight="600">
+                        <text x="10" y={y + 11} fill="#475569" fontSize="10" fontWeight="600">
                           {lane.code} · {lane.name.split(' ')[0]}
                         </text>
 
@@ -433,15 +433,15 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                                 width={bw}
                                 height="15"
                                 rx="3"
-                                fill={it.done ? lane.color : it.current ? `${lane.color}cc` : '#243C60'}
-                                stroke={it.current ? '#FFC20E' : 'rgba(255,255,255,0.1)'}
+                                fill={it.done ? lane.color : it.current ? `${lane.color}ee` : '#E2E8F0'}
+                                stroke={it.current ? '#D97706' : 'rgba(0,0,0,0.06)'}
                                 strokeWidth={it.current ? '1.5' : '1'}
-                                className="group-hover:brightness-125 transition-all"
+                                className="group-hover:brightness-105 transition-all"
                               />
                               <text
                                 x={bx + bw / 2}
                                 y={y + 11}
-                                fill="#FFFFFF"
+                                fill={it.done || it.current ? '#FFFFFF' : '#475569'}
                                 fontSize="9"
                                 fontWeight="bold"
                                 textAnchor="middle"
@@ -482,11 +482,11 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                   >
                     <polygon
                       points="590,5 600,15 590,25 580,15"
-                      fill="#0B2545"
+                      fill="#1F5FAD"
                       stroke="#FFC20E"
                       strokeWidth="2.5"
                     />
-                    <text x="590" y="18" fill="#FFC20E" fontSize="8" fontWeight="bold" textAnchor="middle">
+                    <text x="590" y="18" fill="#FFFFFF" fontSize="8" fontWeight="bold" textAnchor="middle">
                       M2
                     </text>
                   </g>
@@ -499,11 +499,11 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                   >
                     <polygon
                       points="840,5 850,15 840,25 830,15"
-                      fill="#243C60"
-                      stroke="#7A9CC6"
+                      fill="#F1F5F9"
+                      stroke="#94A3B8"
                       strokeWidth="1.5"
                     />
-                    <text x="840" y="18" fill="#7A9CC6" fontSize="7" fontWeight="bold" textAnchor="middle">
+                    <text x="840" y="18" fill="#64748B" fontSize="7" fontWeight="bold" textAnchor="middle">
                       M3
                     </text>
                   </g>
@@ -515,11 +515,11 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                   >
                     <polygon
                       points="1030,5 1040,15 1030,25 1020,15"
-                      fill="#243C60"
-                      stroke="#7A9CC6"
+                      fill="#F1F5F9"
+                      stroke="#94A3B8"
                       strokeWidth="1.5"
                     />
-                    <text x="1030" y="18" fill="#7A9CC6" fontSize="7" fontWeight="bold" textAnchor="middle">
+                    <text x="1030" y="18" fill="#64748B" fontSize="7" fontWeight="bold" textAnchor="middle">
                       M4
                     </text>
                   </g>
@@ -528,7 +528,7 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                   <path
                     d="M 390 35 L 430 35 L 440 60 L 520 60 L 580 15"
                     fill="none"
-                    stroke="#FFC20E"
+                    stroke="#D97706"
                     strokeWidth="2"
                     strokeDasharray="4 2"
                   />
@@ -574,12 +574,12 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
           {/* Row 3: Module Health (4 cols) | Top Risks (5 cols) | Deliverables Stack (3 cols) */}
           <div className="px-8 py-3 grid grid-cols-12 gap-3.5">
             {/* Left: Module Health (4 cols) */}
-            <div className="col-span-4 bg-[#13233D] rounded-xl border border-white/10 p-3.5 flex flex-col justify-between shadow-dark-level-1">
-              <div className="flex items-center justify-between pb-1.5 border-b border-white/10">
-                <span className="text-[12px] font-bold text-white uppercase tracking-wider">
+            <div className="col-span-4 bg-white rounded-xl border border-border p-3.5 flex flex-col justify-between shadow-level-1">
+              <div className="flex items-center justify-between pb-1.5 border-b border-border">
+                <span className="text-[12px] font-bold text-navy-900 uppercase tracking-wider">
                   Module Delivery Health
                 </span>
-                <span className="text-[10px] font-mono text-emerald-400">5 Green · 1 Amber</span>
+                <span className="text-[10px] font-mono text-emerald-700 font-semibold">5 Green · 1 Amber</span>
               </div>
 
               <div className="space-y-1.5">
@@ -593,7 +593,7 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                         handleDeliverableClick(lane.code, lane.name, it);
                       }
                     }}
-                    className="flex items-center justify-between text-[11px] p-1.5 rounded hover:bg-white/10 cursor-pointer transition-colors"
+                    className="flex items-center justify-between text-[11px] p-1.5 rounded hover:bg-slate-50 cursor-pointer transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <span
@@ -602,13 +602,13 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                       >
                         {mh.mod}
                       </span>
-                      <span className="text-white font-medium truncate max-w-[130px]">{mh.deliv}</span>
+                      <span className="text-navy-900 font-medium truncate max-w-[130px]">{mh.deliv}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-steel-400 text-[10px]">{mh.due}</span>
+                      <span className="font-mono text-secondaryText text-[10px]">{mh.due}</span>
                       <span
-                        className={`w-2 h-2 rounded-full ${mh.rag === 'Green' ? 'bg-emerald-400' : 'bg-amber-400'}`}
+                        className={`w-2 h-2 rounded-full ${mh.rag === 'Green' ? 'bg-emerald-500' : 'bg-amber-500'}`}
                       />
                     </div>
                   </div>
@@ -617,11 +617,11 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
             </div>
 
             {/* Centre: Top Risks Table (5 cols) */}
-            <div className="col-span-5 bg-[#13233D] rounded-xl border border-white/10 p-3.5 flex flex-col justify-between shadow-dark-level-1">
-              <div className="flex items-center justify-between pb-1.5 border-b border-white/10">
+            <div className="col-span-5 bg-white rounded-xl border border-border p-3.5 flex flex-col justify-between shadow-level-1">
+              <div className="flex items-center justify-between pb-1.5 border-b border-border">
                 <div className="flex items-center gap-1.5">
-                  <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="text-[12px] font-bold text-white uppercase tracking-wider">
+                  <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
+                  <span className="text-[12px] font-bold text-navy-900 uppercase tracking-wider">
                     Top Programme Risks
                   </span>
                 </div>
@@ -631,10 +631,10 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                     <button
                       key={lvl}
                       onClick={() => setRiskFilter(lvl)}
-                      className={`px-1.5 py-0.5 rounded text-[9px] font-bold transition-all ${
+                      className={`px-1.5 py-0.5 rounded text-[9px] font-bold transition-all cursor-pointer ${
                         riskFilter === lvl
                           ? 'bg-blue-600 text-white'
-                          : 'bg-white/5 text-steel-400 hover:text-white'
+                          : 'bg-slate-100 text-secondaryText hover:bg-slate-200 border border-slate-200'
                       }`}
                     >
                       {lvl}
@@ -645,7 +645,7 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
 
               <table className="w-full text-left text-[11px]">
                 <thead>
-                  <tr className="border-b border-white/10 text-[9px] text-steel-400 uppercase tracking-wider">
+                  <tr className="border-b border-border text-[9px] text-secondaryText uppercase tracking-wider">
                     <th className="py-1">ID</th>
                     <th className="py-1">Risk Description</th>
                     <th className="py-1">L/I</th>
@@ -653,21 +653,21 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                     <th className="py-1 text-right">Mitigation</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-border">
                   {filteredRisks.map((r) => (
                     <tr
                       key={r.id}
                       onClick={() => setSelectedRisk(r)}
-                      className="hover:bg-white/10 cursor-pointer transition-colors"
+                      className="hover:bg-slate-50 cursor-pointer transition-colors"
                     >
-                      <td className="py-1.5 font-mono text-gold-500 font-bold">{r.id}</td>
-                      <td className="py-1.5 text-white truncate max-w-[140px]">{r.risk}</td>
-                      <td className="py-1.5 font-mono text-steel-300">
+                      <td className="py-1.5 font-mono text-amber-600 font-bold">{r.id}</td>
+                      <td className="py-1.5 text-navy-900 truncate max-w-[140px] font-medium">{r.risk}</td>
+                      <td className="py-1.5 font-mono text-secondaryText">
                         {r.l}/{r.i}
                       </td>
-                      <td className="py-1.5 text-steel-400">{r.owner}</td>
+                      <td className="py-1.5 text-secondaryText">{r.owner}</td>
                       <td className="py-1.5 text-right">
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-emerald-300 border border-white/10">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
                           {r.mit}
                         </span>
                       </td>
@@ -684,28 +684,28 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                 onClick={() =>
                   showToast('Deliverables Acceptance: 38 Accepted, 9 In Review, 4 Conditional, 1 Rejected')
                 }
-                className="bg-[#13233D] rounded-xl border border-white/10 p-3 space-y-1.5 shadow-dark-level-1 cursor-pointer hover:border-white/20 transition-colors"
+                className="bg-white rounded-xl border border-border p-3 space-y-1.5 shadow-level-1 cursor-pointer hover:border-blue-300 transition-colors"
               >
-                <div className="flex justify-between text-[11px] font-bold text-white">
+                <div className="flex justify-between text-[11px] font-bold text-navy-900">
                   <span>Deliverables Acceptance</span>
-                  <span className="font-mono text-emerald-400">38 Accepted</span>
+                  <span className="font-mono text-emerald-700">38 Accepted</span>
                 </div>
 
                 {/* Stacked bar */}
-                <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden flex">
+                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden flex">
                   <div className="h-full bg-emerald-500" style={{ width: '73%' }} title="Accepted: 38" />
                   <div className="h-full bg-blue-500" style={{ width: '17%' }} title="In review: 9" />
                   <div className="h-full bg-amber-500" style={{ width: '8%' }} title="Conditional: 4" />
                   <div className="h-full bg-rose-500" style={{ width: '2%' }} title="Rejected: 1" />
                 </div>
 
-                <div className="flex justify-between text-[9px] text-steel-400 font-mono">
+                <div className="flex justify-between text-[9px] text-secondaryText font-mono">
                   <span>Acc 38</span>
                   <span>Rev 9</span>
                   <span>Cond 4</span>
                   <span>Rej 1</span>
                 </div>
-                <div className="text-[9px] text-steel-500 italic">Click to inspect breakdown</div>
+                <div className="text-[9px] text-secondaryText italic">Click to inspect breakdown</div>
               </div>
 
               {/* Card 2: Design Conformance */}
@@ -713,21 +713,21 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                 onClick={() =>
                   showToast('SRS Conformance: 148 Traced (61 Verified, 84 In dev, 3 Deviations approved)')
                 }
-                className="bg-[#13233D] rounded-xl border border-white/10 p-3 space-y-1.5 shadow-dark-level-1 cursor-pointer hover:border-white/20 transition-colors"
+                className="bg-white rounded-xl border border-border p-3 space-y-1.5 shadow-level-1 cursor-pointer hover:border-blue-300 transition-colors"
               >
-                <div className="flex justify-between text-[11px] font-bold text-white">
+                <div className="flex justify-between text-[11px] font-bold text-navy-900">
                   <span>SRS Conformance</span>
-                  <span className="font-mono text-blue-400">148 Traced</span>
+                  <span className="font-mono text-blue-600">148 Traced</span>
                 </div>
 
                 {/* Segmented bar */}
-                <div className="w-full h-2.5 bg-white/10 rounded-full overflow-hidden flex">
+                <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden flex">
                   <div className="h-full bg-blue-600" style={{ width: '42%' }} title="Verified: 61" />
-                  <div className="h-full bg-steel-400" style={{ width: '56%' }} title="In development: 84" />
+                  <div className="h-full bg-slate-300" style={{ width: '56%' }} title="In development: 84" />
                   <div className="h-full bg-amber-500" style={{ width: '2%' }} title="Deviations: 3" />
                 </div>
 
-                <div className="text-[10px] text-steel-400 flex justify-between font-mono">
+                <div className="text-[10px] text-secondaryText flex justify-between font-mono">
                   <span>61 Verified</span>
                   <span>3 Deviations Proposed</span>
                 </div>
@@ -736,44 +736,44 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
           </div>
 
           {/* Micro Footer */}
-          <MicroFooter isDarkTheme={true} />
+          <MicroFooter isDarkTheme={false} />
         </div>
       </div>
 
       {/* Deliverable / Milestone Detail Modal */}
       {selectedDeliverable && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-[520px] bg-[#0E1E34] border border-white/20 rounded-2xl p-6 shadow-2xl space-y-4 text-white">
-            <div className="flex items-start justify-between border-b border-white/10 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-[520px] bg-white border border-border rounded-2xl p-6 shadow-2xl space-y-4 text-navy-900">
+            <div className="flex items-start justify-between border-b border-border pb-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                  <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-blue-50 text-blue-700 border border-blue-200">
                     {selectedDeliverable.id}
                   </span>
                   <span
                     className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                       selectedDeliverable.status === 'Accepted'
-                        ? 'bg-emerald-500/20 text-emerald-400'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                         : selectedDeliverable.status === 'In Progress'
-                        ? 'bg-amber-500/20 text-amber-400'
-                        : 'bg-white/10 text-steel-400'
+                        ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                        : 'bg-slate-100 text-secondaryText border border-border'
                     }`}
                   >
                     {selectedDeliverable.status}
                   </span>
                   {selectedDeliverable.criticalPath && (
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-gold-500/20 text-gold-400 border border-gold-500/30">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-gold-500/15 text-gold-700 border border-gold-500/30">
                       Critical Path
                     </span>
                   )}
                 </div>
-                <h3 className="text-[17px] font-bold text-white mt-1.5">
+                <h3 className="text-[17px] font-bold text-navy-900 mt-1.5">
                   {selectedDeliverable.name}
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedDeliverable(null)}
-                className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-steel-300"
+                className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-secondaryText hover:text-navy-900 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -781,40 +781,40 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
 
             <div className="space-y-3 text-[13px]">
               <div>
-                <span className="text-steel-400 block text-[11px] uppercase">Workstream</span>
-                <span className="font-semibold text-white">{selectedDeliverable.module}</span>
+                <span className="text-secondaryText block text-[11px] uppercase font-semibold">Workstream</span>
+                <span className="font-semibold text-navy-900">{selectedDeliverable.module}</span>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-steel-400 block text-[11px] uppercase">Lead Custodian</span>
-                  <span className="font-semibold text-white">{selectedDeliverable.lead}</span>
+                  <span className="text-secondaryText block text-[11px] uppercase font-semibold">Lead Custodian</span>
+                  <span className="font-semibold text-navy-900">{selectedDeliverable.lead}</span>
                 </div>
                 <div>
-                  <span className="text-steel-400 block text-[11px] uppercase">Due Schedule</span>
-                  <span className="font-semibold text-white">{selectedDeliverable.due}</span>
+                  <span className="text-secondaryText block text-[11px] uppercase font-semibold">Due Schedule</span>
+                  <span className="font-semibold text-navy-900">{selectedDeliverable.due}</span>
                 </div>
               </div>
               <div>
-                <span className="text-steel-400 block text-[11px] uppercase">Description</span>
-                <p className="text-steel-300 text-[12px] leading-relaxed">
+                <span className="text-secondaryText block text-[11px] uppercase font-semibold">Description</span>
+                <p className="text-slate-600 text-[12px] leading-relaxed">
                   {selectedDeliverable.desc}
                 </p>
               </div>
               <div>
-                <span className="text-steel-400 block text-[11px] uppercase">SRS Traceability</span>
-                <code className="text-gold-400 text-[11px] font-mono">
+                <span className="text-secondaryText block text-[11px] uppercase font-semibold">SRS Traceability</span>
+                <code className="text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 text-[11px] font-mono">
                   {selectedDeliverable.reqTrace}
                 </code>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-border">
               <button
                 onClick={() => {
                   showToast(`Downloaded technical spec for ${selectedDeliverable.id}`);
                   setSelectedDeliverable(null);
                 }}
-                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-[12px] font-semibold flex items-center gap-1.5 transition-colors"
+                className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-navy-900 text-[12px] font-semibold flex items-center gap-1.5 transition-colors border border-border cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Technical Spec</span>
@@ -824,7 +824,7 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
                   showToast(`Sign-off review request submitted for ${selectedDeliverable.id}`);
                   setSelectedDeliverable(null);
                 }}
-                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold shadow-md transition-colors"
+                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold shadow-md transition-colors cursor-pointer"
               >
                 Request Sign-Off
               </button>
@@ -835,53 +835,53 @@ export const S11_ProgrammeCommandCentre: React.FC<S11Props> = ({ onNavigate }) =
 
       {/* Risk Inspection Modal */}
       {selectedRisk && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-[480px] bg-[#0E1E34] border border-amber-500/30 rounded-2xl p-6 shadow-2xl space-y-4 text-white">
-            <div className="flex items-start justify-between border-b border-white/10 pb-3">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-[480px] bg-white border border-border rounded-2xl p-6 shadow-2xl space-y-4 text-navy-900">
+            <div className="flex items-start justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-amber-400" />
-                <span className="font-mono font-bold text-gold-400">{selectedRisk.id}</span>
-                <span className="text-[15px] font-bold text-white">{selectedRisk.risk}</span>
+                <AlertTriangle className="w-5 h-5 text-amber-600" />
+                <span className="font-mono font-bold text-gold-600">{selectedRisk.id}</span>
+                <span className="text-[15px] font-bold text-navy-900">{selectedRisk.risk}</span>
               </div>
               <button
                 onClick={() => setSelectedRisk(null)}
-                className="text-steel-400 hover:text-white"
+                className="text-secondaryText hover:text-navy-900 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="space-y-3 text-[12px]">
-              <div className="grid grid-cols-3 gap-2 p-2 rounded-lg bg-white/5 font-mono text-center">
+              <div className="grid grid-cols-3 gap-2 p-2 rounded-lg bg-slate-50 border border-border font-mono text-center">
                 <div>
-                  <span className="text-steel-400 text-[10px] block">Likelihood</span>
-                  <span className="text-white font-bold">{selectedRisk.l}</span>
+                  <span className="text-secondaryText text-[10px] block">Likelihood</span>
+                  <span className="text-navy-900 font-bold">{selectedRisk.l}</span>
                 </div>
                 <div>
-                  <span className="text-steel-400 text-[10px] block">Impact</span>
-                  <span className="text-amber-400 font-bold">{selectedRisk.i}</span>
+                  <span className="text-secondaryText text-[10px] block">Impact</span>
+                  <span className="text-amber-600 font-bold">{selectedRisk.i}</span>
                 </div>
                 <div>
-                  <span className="text-steel-400 text-[10px] block">Assigned Lead</span>
-                  <span className="text-white font-bold">{selectedRisk.owner}</span>
+                  <span className="text-secondaryText text-[10px] block">Assigned Lead</span>
+                  <span className="text-navy-900 font-bold">{selectedRisk.owner}</span>
                 </div>
               </div>
 
               <div>
-                <span className="text-steel-400 text-[10px] uppercase font-bold block">
+                <span className="text-secondaryText text-[10px] uppercase font-bold block">
                   Active Mitigation Plan
                 </span>
-                <p className="text-steel-200 mt-1">{selectedRisk.details}</p>
+                <p className="text-slate-600 mt-1">{selectedRisk.details}</p>
               </div>
             </div>
 
-            <div className="flex justify-end pt-2 border-t border-white/10">
+            <div className="flex justify-end pt-2 border-t border-border">
               <button
                 onClick={() => {
                   showToast(`Risk mitigation review logged for ${selectedRisk.id}`);
                   setSelectedRisk(null);
                 }}
-                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-navy-900 font-bold text-[12px] transition-colors"
+                className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-[12px] transition-colors cursor-pointer shadow-sm"
               >
                 Update Mitigation Action
               </button>
