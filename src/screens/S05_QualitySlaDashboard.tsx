@@ -22,6 +22,32 @@ interface S05Props {
 
 export const S05_QualitySlaDashboard: React.FC<S05Props> = ({ onNavigate }) => {
   const [hoveredPoint, setHoveredPoint] = useState<number | null>(14);
+  const [timeRange, setTimeRange] = useState('Last 30 days');
+  const [timeDropdownOpen, setTimeDropdownOpen] = useState(false);
+  const [selectedEntity, setSelectedEntity] = useState('All entities');
+  const [entityDropdownOpen, setEntityDropdownOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [selectedCell, setSelectedCell] = useState<{ theme: string; check: string; score: number } | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const handleExportReport = () => {
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      'Entity,Datasets,Currency,Quality,Tickets,Status\n' +
+      entities.map((e) => `${e.name},${e.datasets},${e.currency},${e.quality},${e.tickets},${e.status}`).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `AD-SDI-SLA-Report-${timeRange.replace(/\s+/g, '-')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(`Exported AD-SDI SLA & Quality Report (${timeRange})`);
+  };
 
   const kpis = [
     {
@@ -118,15 +144,82 @@ export const S05_QualitySlaDashboard: React.FC<S05Props> = ({ onNavigate }) => {
             </div>
 
             <div className="flex items-center gap-3">
-              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-canvas text-[12px] font-medium text-primaryText hover:bg-slate-100">
-                <span>Last 30 days</span>
-                <ChevronDown className="w-3.5 h-3.5 text-steel-400" />
-              </button>
-              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-canvas text-[12px] font-medium text-primaryText hover:bg-slate-100">
-                <span>All entities</span>
-                <ChevronDown className="w-3.5 h-3.5 text-steel-400" />
-              </button>
-              <button className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-[12px] font-semibold transition-colors shadow-sm">
+              {/* Time Range Filter Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTimeDropdownOpen(!timeDropdownOpen);
+                    setEntityDropdownOpen(false);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-canvas text-[12px] font-medium text-primaryText hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <span>{timeRange}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-steel-400" />
+                </button>
+                {timeDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-1.5 w-36 bg-white rounded-xl shadow-level-3 border border-border py-1 z-50 text-[12px]">
+                    {['Last 7 days', 'Last 30 days', 'Last 90 days', 'Past 12 months'].map((tr) => (
+                      <button
+                        key={tr}
+                        type="button"
+                        onClick={() => {
+                          setTimeRange(tr);
+                          setTimeDropdownOpen(false);
+                          showToast(`Updated SLA metrics for ${tr}`);
+                        }}
+                        className={`w-full text-left px-3 py-1.5 hover:bg-slate-50 transition-colors ${
+                          timeRange === tr ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-primaryText'
+                        }`}
+                      >
+                        {tr}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Entity Filter Dropdown */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEntityDropdownOpen(!entityDropdownOpen);
+                    setTimeDropdownOpen(false);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-canvas text-[12px] font-medium text-primaryText hover:bg-slate-100 transition-colors cursor-pointer"
+                >
+                  <span>{selectedEntity}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-steel-400" />
+                </button>
+                {entityDropdownOpen && (
+                  <div className="absolute right-0 top-full mt-1.5 w-40 bg-white rounded-xl shadow-level-3 border border-border py-1 z-50 text-[12px]">
+                    {['All entities', 'DMT', 'EAD', 'SCAD', 'DoH', 'ADEK', 'ADPHC'].map((ent) => (
+                      <button
+                        key={ent}
+                        type="button"
+                        onClick={() => {
+                          setSelectedEntity(ent);
+                          setEntityDropdownOpen(false);
+                          showToast(`Filtered compliance matrix to ${ent}`);
+                        }}
+                        className={`w-full text-left px-3 py-1.5 hover:bg-slate-50 transition-colors ${
+                          selectedEntity === ent ? 'text-blue-600 font-bold bg-blue-50/50' : 'text-primaryText'
+                        }`}
+                      >
+                        {ent}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Real CSV Export Button */}
+              <button
+                type="button"
+                onClick={handleExportReport}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-navy-900 hover:bg-navy-800 text-white text-[12px] font-semibold transition-colors shadow-sm cursor-pointer"
+              >
                 <Download className="w-3.5 h-3.5 text-gold-500" />
                 <span>Export report</span>
               </button>
@@ -386,18 +479,20 @@ export const S05_QualitySlaDashboard: React.FC<S05Props> = ({ onNavigate }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/50">
-                  {entities.map((ent, eIdx) => (
-                    <tr key={eIdx} className="hover:bg-canvas/50">
-                      <td className="py-1.5 font-bold text-navy-900">{ent.name}</td>
-                      <td className="py-1.5 font-mono text-secondaryText">{ent.datasets}</td>
-                      <td className="py-1.5 font-mono text-primaryText font-semibold">{ent.currency}</td>
-                      <td className="py-1.5 font-mono text-primaryText font-semibold">{ent.quality}</td>
-                      <td className="py-1.5 font-mono text-secondaryText">{ent.tickets}</td>
-                      <td className="py-1.5 text-right">
-                        <StatusPill status={ent.status} />
-                      </td>
-                    </tr>
-                  ))}
+                  {entities
+                    .filter((ent) => selectedEntity === 'All entities' || ent.name === selectedEntity)
+                    .map((ent, eIdx) => (
+                      <tr key={eIdx} className="hover:bg-canvas/50">
+                        <td className="py-1.5 font-bold text-navy-900">{ent.name}</td>
+                        <td className="py-1.5 font-mono text-secondaryText">{ent.datasets}</td>
+                        <td className="py-1.5 font-mono text-primaryText font-semibold">{ent.currency}</td>
+                        <td className="py-1.5 font-mono text-primaryText font-semibold">{ent.quality}</td>
+                        <td className="py-1.5 font-mono text-secondaryText">{ent.tickets}</td>
+                        <td className="py-1.5 text-right">
+                          <StatusPill status={ent.status} />
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
@@ -408,7 +503,7 @@ export const S05_QualitySlaDashboard: React.FC<S05Props> = ({ onNavigate }) => {
                 <span className="text-[13px] font-bold text-navy-900 uppercase tracking-wider">
                   Themes × Quality Checks
                 </span>
-                <span className="text-[11px] text-secondaryText">Single-hue Blue Scale</span>
+                <span className="text-[11px] text-secondaryText">Click cell for gate audit</span>
               </div>
 
               {/* Heatmap Grid */}
@@ -443,13 +538,15 @@ export const S05_QualitySlaDashboard: React.FC<S05Props> = ({ onNavigate }) => {
 
                           return (
                             <td key={ci} className="p-0.5">
-                              <div
-                                className="w-full h-4 rounded text-[9px] font-bold flex items-center justify-center text-white"
+                              <button
+                                type="button"
+                                onClick={() => setSelectedCell({ theme: th, check: heatmapChecks[ci], score: val })}
+                                className="w-full h-4 rounded text-[9px] font-bold flex items-center justify-center text-white cursor-pointer hover:scale-110 hover:shadow-sm transition-transform"
                                 style={{ backgroundColor: bg }}
-                                title={`${th} - ${heatmapChecks[ci]}: ${(val * 100).toFixed(0)}%`}
+                                title={`${th} - ${heatmapChecks[ci]}: ${(val * 100).toFixed(0)}% (Click for details)`}
                               >
                                 {(val * 100).toFixed(0)}%
-                              </div>
+                              </button>
                             </td>
                           );
                         })}
@@ -485,6 +582,83 @@ export const S05_QualitySlaDashboard: React.FC<S05Props> = ({ onNavigate }) => {
           <MicroFooter />
         </div>
       </div>
+
+      {/* Heatmap Cell Diagnostic Modal */}
+      {selectedCell && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-level-4 border border-border max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-border">
+              <div>
+                <h3 className="font-bold text-[16px] text-navy-900">
+                  {selectedCell.theme} · {selectedCell.check} Test
+                </h3>
+                <span className="text-[12px] text-secondaryText">Automated ISO 19157 Quality Gate Audit</span>
+              </div>
+              <button
+                onClick={() => setSelectedCell(null)}
+                className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-steel-400"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 text-[12px]">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-border">
+                <span className="text-secondaryText">Conformance Pass Rate</span>
+                <span className="font-mono font-bold text-[16px] text-blue-700">
+                  {(selectedCell.score * 100).toFixed(1)}%
+                </span>
+              </div>
+
+              <div className="space-y-1.5">
+                <div className="font-bold text-navy-900 text-[11px] uppercase tracking-wider">Test Execution Summary</div>
+                <div className="p-2.5 rounded-lg border border-border space-y-1">
+                  <div className="flex justify-between text-secondaryText">
+                    <span>Total Features Evaluated:</span>
+                    <strong className="font-mono text-primaryText">142,850</strong>
+                  </div>
+                  <div className="flex justify-between text-secondaryText">
+                    <span>Compliant Geometry & Records:</span>
+                    <strong className="font-mono text-emerald-600">
+                      {Math.round(142850 * selectedCell.score).toLocaleString()}
+                    </strong>
+                  </div>
+                  <div className="flex justify-between text-secondaryText">
+                    <span>Anomalies Flagged:</span>
+                    <strong className="font-mono text-amber-600">
+                      {Math.round(142850 * (1 - selectedCell.score)).toLocaleString()}
+                    </strong>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-secondaryText text-[11px] leading-relaxed">
+                Rules applied: EPSG:3997 coordinate bounds, topological planar enforcement, and mandatory attribute domain constraints under Abu Dhabi Geospatial Data Governance Framework.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+              <button
+                onClick={() => {
+                  setSelectedCell(null);
+                  showToast(`Triggered re-validation queue for ${selectedCell.theme}`);
+                }}
+                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold"
+              >
+                Trigger Re-Validation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0B2545] text-white px-4 py-2.5 rounded-full shadow-2xl border border-gold-500/50 flex items-center gap-2 text-[12px] font-medium animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 };

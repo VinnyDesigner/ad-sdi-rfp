@@ -3,20 +3,17 @@ import { ScreenId } from '../types';
 import { HeaderWorkspace } from '../components/common/HeaderWorkspace';
 import { SidebarWorkspace } from '../components/common/SidebarWorkspace';
 import { MicroFooter } from '../components/common/MicroFooter';
+import { InteractiveMap } from '../components/common/InteractiveMap';
 import {
   Sparkles,
-  Sliders,
   Play,
   CheckCircle2,
-  ChevronRight,
-  Layers,
   ArrowRight,
-  Check,
   Download,
-  Share2,
-  Upload,
-  Pencil,
   FileCheck2,
+  Sliders,
+  Check,
+  RotateCcw,
 } from 'lucide-react';
 
 interface S06Props {
@@ -26,8 +23,23 @@ interface S06Props {
 export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('Change detection');
   const [confidence, setConfidence] = useState(0.8);
-  const [swipePos, setSwipePos] = useState(52); // Percentage 0-100
   const [selectedDetection, setSelectedDetection] = useState<number>(1);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const [detections, setDetections] = useState([
+    { id: 1, type: 'New building', area: '1,240 m²', conf: 0.96, status: 'Pending review', color: '#7B4FD6' },
+    { id: 2, type: 'Extension', area: '310 m²', conf: 0.92, status: 'Verified', color: '#0E9F8E' },
+    { id: 3, type: 'Demolition', area: '580 m²', conf: 0.94, status: 'Verified', color: '#E07B24' },
+    { id: 4, type: 'New structure', area: '840 m²', conf: 0.89, status: 'Pending review', color: '#7B4FD6' },
+    { id: 5, type: 'New building', area: '960 m²', conf: 0.88, status: 'Flagged', color: '#7B4FD6' },
+  ]);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
 
   const useCasePills = [
     { name: 'Candidate', count: 12 },
@@ -37,33 +49,102 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
     { name: 'Production', count: 2, current: true },
   ];
 
-  const detections = [
-    { id: 1, type: 'New building', area: '1,240 m²', conf: 0.96, status: 'Pending review', color: '#7B4FD6' },
-    { id: 2, type: 'Extension', area: '310 m²', conf: 0.92, status: 'Verified', color: '#0E9F8E' },
-    { id: 3, type: 'New structure', area: '840 m²', conf: 0.89, status: 'Pending review', color: '#7B4FD6' },
-    { id: 4, type: 'Demolition', area: '580 m²', conf: 0.94, status: 'Verified', color: '#E07B24' },
-    { id: 5, type: 'New building', area: '960 m²', conf: 0.88, status: 'Flagged', color: '#7B4FD6' },
-  ];
+  const handleRunAnalysis = () => {
+    setIsAnalyzing(true);
+    setAnalysisProgress(15);
+    showToast('GPU Cluster: Ingesting high-resolution orthophoto tiles...');
+
+    const interval = setInterval(() => {
+      setAnalysisProgress((p) => {
+        if (p >= 90) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setIsAnalyzing(false);
+            setAnalysisProgress(100);
+            showToast('AI Inference complete: 5 changes identified with >80% confidence');
+          }, 400);
+          return 95;
+        }
+        return p + 25;
+      });
+    }, 300);
+  };
+
+  const handleVerifyDetection = (id: number) => {
+    setDetections((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, status: 'Verified' } : d))
+    );
+    showToast(`Detection #${id} marked as Verified`);
+  };
+
+  const handleExportGeoJSON = () => {
+    const geojsonData = {
+      type: 'FeatureCollection',
+      name: 'AbuDhabi_GeoAI_ChangeDetections',
+      features: detections.map((d) => ({
+        type: 'Feature',
+        properties: {
+          id: d.id,
+          change_type: d.type,
+          area_sqm: d.area,
+          confidence: d.conf,
+          status: d.status,
+          evaluated_at: '2027-08-30T10:15:00Z',
+        },
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [54.537, 24.451],
+              [54.543, 24.451],
+              [54.543, 24.455],
+              [54.537, 24.455],
+              [54.537, 24.451],
+            ],
+          ],
+        },
+      })),
+    };
+
+    const blob = new Blob([JSON.stringify(geojsonData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'GeoAI_ChangeDetections_AbuDhabi.geojson';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Exported GeoJSON detections file');
+  };
+
+  const filteredDetections = detections.filter((d) => d.conf >= confidence);
 
   return (
-    <div className="w-full h-screen bg-canvas flex flex-col justify-between overflow-hidden select-none font-sans">
+    <div className="w-full h-screen bg-canvas flex flex-col justify-between overflow-hidden select-none font-sans relative">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="absolute top-20 right-6 z-50 bg-navy-900 text-white px-4 py-2 rounded-xl shadow-2xl border border-white/20 text-[12px] flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* 1. Top Bar */}
       <HeaderWorkspace currentScreen="S06_GeoAiChangeDetection" onNavigate={onNavigate} />
 
       <div className="flex-1 flex overflow-hidden">
-        {/* 2. Sidebar (GeoAI Studio Active) */}
+        {/* 2. Sidebar */}
         <SidebarWorkspace currentScreen="S06_GeoAiChangeDetection" onNavigate={onNavigate} />
 
         {/* 3. Main Workspace Area */}
         <div className="flex-1 flex flex-col justify-between overflow-hidden bg-canvas">
           {/* Header Compact + Tabs */}
-          <div className="px-8 pt-3 pb-1 bg-white border-b border-border flex items-center justify-between">
+          <div className="px-8 pt-3 pb-1 bg-white border-b border-border flex items-center justify-between flex-shrink-0">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-[#7B4FD6]" />
-                <h1 className="text-[22px] font-bold text-navy-900 tracking-tight">
-                  GeoAI Studio
-                </h1>
+                <h1 className="text-[22px] font-bold text-navy-900 tracking-tight">GeoAI Studio</h1>
                 <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-100 text-purple-900 border border-purple-200">
                   Module B · AI Engine
                 </span>
@@ -75,7 +156,7 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
                   <button
                     key={t}
                     onClick={() => setActiveTab(t)}
-                    className={`py-1.5 transition-colors font-medium ${
+                    className={`py-1.5 transition-colors font-medium cursor-pointer ${
                       activeTab === t
                         ? 'text-[#7B4FD6] font-bold border-b-2 border-[#7B4FD6]'
                         : 'text-secondaryText hover:text-navy-900'
@@ -89,14 +170,14 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
 
             <button
               onClick={() => onNavigate('S07_GeoAiAssistant')}
-              className="text-[12px] font-semibold text-blue-600 hover:underline flex items-center gap-1"
+              className="text-[12px] font-semibold text-blue-600 hover:underline flex items-center gap-1 cursor-pointer"
             >
               <span>Launch Conversational Assistant →</span>
             </button>
           </div>
 
-          {/* Use-Case Strip (full width, 52 px) */}
-          <div className="px-8 py-2 bg-white/80 border-b border-border flex items-center justify-between text-[12px]">
+          {/* Use-Case Strip */}
+          <div className="px-8 py-2 bg-white/80 border-b border-border flex items-center justify-between text-[12px] flex-shrink-0">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-secondaryText uppercase tracking-wider text-[11px]">
                 Model Pipeline:
@@ -129,90 +210,59 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
             </div>
 
             <div className="flex items-center gap-2 text-[11px] text-secondaryText">
-              <span className="w-2 h-2 rounded-full bg-success"></span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <span>GPU Cluster Online (UAE Sovereign Cloud)</span>
             </div>
           </div>
 
-          {/* Three-Zone Body (Config 300 px | Map Flex | Results 340 px) */}
+          {/* Three-Zone Body */}
           <div className="flex-1 flex overflow-hidden p-6 gap-4">
             {/* Zone 1: Analysis Configuration Panel (300 px) */}
             <div className="w-[300px] bg-white rounded-xl border border-border shadow-level-1 p-4 flex flex-col justify-between overflow-y-auto">
-              <div className="space-y-3.5">
-                <div className="flex items-center justify-between pb-2 border-b border-border">
-                  <span className="text-[13px] font-bold text-navy-900 uppercase tracking-wider">
-                    Analysis Parameters
-                  </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                    Production
-                  </span>
+              <div className="space-y-4">
+                <div className="text-[13px] font-bold text-navy-900 flex items-center gap-2 pb-2 border-b border-border">
+                  <Sliders className="w-4 h-4 text-[#7B4FD6]" />
+                  <span>Detection Parameters</span>
                 </div>
 
-                {/* Model */}
+                {/* Target Region */}
                 <div>
                   <label className="text-[11px] font-semibold text-secondaryText uppercase block mb-1">
-                    AI Model
+                    Region of Interest
                   </label>
-                  <div className="p-2 rounded-lg bg-canvas border border-border text-[12px] font-bold text-navy-900 flex items-center justify-between">
-                    <span>Building Change Detection v3.2</span>
-                    <Sparkles className="w-3.5 h-3.5 text-[#7B4FD6]" />
+                  <select className="w-full h-9 px-2.5 rounded-lg border border-border bg-slate-50 text-[12px] font-medium text-navy-900 outline-none">
+                    <option>Khalifa City Industrial Zone</option>
+                    <option>Mussafah Expansion District</option>
+                    <option>Saadiyat Island Cultural Zone</option>
+                    <option>Al Ain Regional Sector</option>
+                  </select>
+                </div>
+
+                {/* Imagery Pairs */}
+                <div className="space-y-2">
+                  <div className="text-[11px] font-semibold text-secondaryText uppercase">
+                    Temporal Baseline (Pair)
+                  </div>
+                  <div className="p-2 rounded bg-slate-50 border border-border text-[11px]">
+                    <span className="text-secondaryText">T1 (Reference):</span>
+                    <div className="font-bold text-primaryText font-mono">Jan 2027 · 0.5m Orthophoto</div>
+                  </div>
+                  <div className="p-2 rounded bg-slate-50 border border-border text-[11px]">
+                    <span className="text-secondaryText">T2 (Observation):</span>
+                    <div className="font-bold text-primaryText font-mono">Aug 2027 · 0.5m Orthophoto</div>
                   </div>
                 </div>
 
-                {/* Use Case */}
-                <div>
-                  <label className="text-[11px] font-semibold text-secondaryText uppercase block mb-1">
-                    Use Case
-                  </label>
-                  <div className="text-[12px] text-primaryText font-medium">
-                    New construction & encroachment monitoring
-                  </div>
-                </div>
-
-                {/* Study Area */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-[11px] font-semibold text-secondaryText uppercase">
-                      Study Area
-                    </label>
-                    <div className="flex items-center gap-1 text-steel-500">
-                      <button className="p-1 hover:text-navy-900" title="Draw polygon">
-                        <Pencil className="w-3 h-3" />
-                      </button>
-                      <button className="p-1 hover:text-navy-900" title="Upload GeoJSON">
-                        <Upload className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="p-2 rounded-lg bg-canvas border border-border text-[12px] font-semibold text-navy-900">
-                    Khalifa City – South-West
-                  </div>
-                </div>
-
-                {/* Imagery T1 and T2 */}
-                <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <div className="p-2 rounded bg-canvas border border-border">
-                    <div className="text-secondaryText text-[10px]">Baseline T1</div>
-                    <div className="font-bold text-primaryText font-mono">Jan 2027 · 0.5m</div>
-                  </div>
-                  <div className="p-2 rounded bg-canvas border border-border">
-                    <div className="text-secondaryText text-[10px]">Target T2</div>
-                    <div className="font-bold text-primaryText font-mono">Aug 2027 · 0.5m</div>
-                  </div>
-                </div>
-
-                {/* Confidence Slider (0.80) */}
+                {/* Confidence Slider */}
                 <div>
                   <div className="flex items-center justify-between text-[11px] mb-1">
-                    <span className="font-semibold text-secondaryText uppercase">
-                      Confidence Threshold
-                    </span>
+                    <span className="font-semibold text-secondaryText uppercase">Confidence Threshold</span>
                     <span className="font-bold text-[#7B4FD6] font-mono">{confidence.toFixed(2)}</span>
                   </div>
                   <input
                     type="range"
                     min="0.5"
-                    max="0.99"
+                    max="0.98"
                     step="0.01"
                     value={confidence}
                     onChange={(e) => setConfidence(parseFloat(e.target.value))}
@@ -221,168 +271,56 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
                   <div className="flex justify-between text-[9px] text-secondaryText font-mono mt-0.5">
                     <span>0.50 (Relaxed)</span>
                     <span>0.80 (Default)</span>
-                    <span>0.99 (Strict)</span>
+                    <span>0.98 (Strict)</span>
                   </div>
                 </div>
 
-                {/* Min Area (25 m2) */}
+                {/* Min Area */}
                 <div className="flex items-center justify-between p-2 rounded bg-canvas border border-border text-[12px]">
-                  <span className="text-secondaryText">Minimum Area:</span>
+                  <span className="text-secondaryText">Minimum Footprint:</span>
                   <span className="font-bold text-primaryText font-mono">25 m²</span>
                 </div>
               </div>
 
-              {/* Action & Status */}
+              {/* Action Button */}
               <div className="pt-3 border-t border-border space-y-2">
-                <button className="w-full h-[40px] bg-[#7B4FD6] hover:bg-[#683eb8] text-white rounded-lg text-[13px] font-semibold flex items-center justify-center gap-2 shadow-sm transition-colors">
+                <button
+                  onClick={handleRunAnalysis}
+                  disabled={isAnalyzing}
+                  className="w-full h-[40px] bg-[#7B4FD6] hover:bg-[#683eb8] text-white rounded-lg text-[13px] font-semibold flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
+                >
                   <Play className="w-4 h-4 fill-white" />
-                  <span>Run Analysis</span>
+                  <span>{isAnalyzing ? `Analyzing (${analysisProgress}%)` : 'Run AI Analysis'}</span>
                 </button>
                 <div className="text-[11px] text-emerald-700 font-semibold flex items-center justify-center gap-1">
                   <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Completed in 4 min 12 s</span>
+                  <span>GPU Cluster ready · Latency &lt; 4s</span>
                 </div>
               </div>
             </div>
 
-            {/* Zone 2: Central Before/After Comparison Map (Flex) */}
+            {/* Zone 2: Central Real Interactive High-Res GIS Map (Flex) */}
             <div className="flex-1 bg-navy-900 rounded-xl border border-border shadow-level-1 overflow-hidden relative flex flex-col">
-              {/* Swipe Map Header Bar */}
+              {/* Header Bar */}
               <div className="absolute top-3 left-3 right-3 z-20 flex items-center justify-between pointer-events-none">
                 <div className="bg-navy-900/90 backdrop-blur border border-white/20 px-3 py-1 rounded text-white text-[11px] font-mono flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-steel-400"></span>
-                  <span>Jan 2027 (Older)</span>
+                  <span>Reference: Jan 2027</span>
                 </div>
                 <div className="bg-navy-900/90 backdrop-blur border border-white/20 px-3 py-1 rounded text-white text-[11px] font-mono flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-gold-500"></span>
-                  <span>Aug 2027 (Newer)</span>
+                  <span>Observation: Aug 2027</span>
                 </div>
               </div>
 
-              {/* Map SVG with Before/After Clip */}
-              <div className="w-full h-full relative overflow-hidden bg-[#0A1628]">
-                {/* Background Aerial / Urban Vector */}
-                <svg viewBox="0 0 600 450" className="w-full h-full object-cover">
-                  {/* Basemap grid */}
-                  <rect width="600" height="450" fill="#0D1E35" />
-                  {/* Roads */}
-                  <path d="M 0 150 L 600 150" stroke="#223B60" strokeWidth="8" />
-                  <path d="M 0 320 L 600 320" stroke="#223B60" strokeWidth="6" />
-                  <path d="M 280 0 L 280 450" stroke="#223B60" strokeWidth="8" />
-
-                  {/* Parcels in background */}
-                  {Array.from({ length: 4 }).map((_, r) =>
-                    Array.from({ length: 5 }).map((_, c) => (
-                      <rect
-                        key={`${r}-${c}`}
-                        x={50 + c * 105}
-                        y={40 + r * 95}
-                        width="80"
-                        height="65"
-                        fill="#152B4A"
-                        stroke="#264775"
-                        strokeWidth="1"
-                      />
-                    ))
-                  )}
-
-                  {/* Polygons: New Construction (#7B4FD6), Demolition (#E07B24), Extension (#0E9F8E) */}
-                  {/* Polygon 1: Selected New Building */}
-                  <g className="cursor-pointer">
-                    <rect
-                      x="165"
-                      y="180"
-                      width="60"
-                      height="48"
-                      rx="3"
-                      fill="rgba(123, 79, 214, 0.45)"
-                      stroke="#7B4FD6"
-                      strokeWidth="2.5"
-                      className="glow-purple"
-                    />
-                    <circle cx="195" cy="204" r="3" fill="#FFC20E" />
-                  </g>
-
-                  {/* Polygon 2: Extension */}
-                  <polygon
-                    points="370,180 410,180 410,210 390,210 390,225 370,225"
-                    fill="rgba(14, 159, 142, 0.45)"
-                    stroke="#0E9F8E"
-                    strokeWidth="2"
-                  />
-
-                  {/* Polygon 3: Demolition */}
-                  <rect
-                    x="270"
-                    y="60"
-                    width="45"
-                    height="40"
-                    fill="rgba(224, 123, 36, 0.4)"
-                    stroke="#E07B24"
-                    strokeWidth="2"
-                    strokeDasharray="4 2"
-                  />
-
-                  {/* More new structures */}
-                  <rect
-                    x="475"
-                    y="240"
-                    width="55"
-                    height="42"
-                    fill="rgba(123, 79, 214, 0.45)"
-                    stroke="#7B4FD6"
-                    strokeWidth="2"
-                  />
-                  <rect
-                    x="60"
-                    y="240"
-                    width="50"
-                    height="38"
-                    fill="rgba(123, 79, 214, 0.45)"
-                    stroke="#7B4FD6"
-                    strokeWidth="2"
-                  />
-                </svg>
-
-                {/* Vertical Swipe Divider Handle per spec (white 2px line + round grip) */}
-                <div
-                  className="absolute top-0 bottom-0 z-30 pointer-events-auto cursor-ew-resize flex items-center justify-center"
-                  style={{ left: `${swipePos}%` }}
-                >
-                  <div className="w-[2px] h-full bg-white shadow-lg" />
-                  <div className="absolute w-8 h-8 rounded-full bg-white text-navy-900 shadow-2xl flex items-center justify-center font-bold text-[12px] border-2 border-navy-900">
-                    ↔
-                  </div>
-                </div>
-
-                {/* Selected Detection Popup on Polygon 1 */}
-                <div className="absolute top-[130px] left-[170px] z-30 bg-navy-900/95 backdrop-blur text-white p-3 rounded-lg border border-purple-400 shadow-level-2 text-left w-[200px] pointer-events-none">
-                  <div className="text-[12px] font-bold text-white flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-[#7B4FD6]" />
-                    <span>New building</span>
-                  </div>
-                  <div className="text-[11px] text-steel-400 mt-1 space-y-0.5 font-mono">
-                    <div>Confidence: <strong className="text-emerald-400">0.96</strong></div>
-                    <div>Footprint: 1,240 m²</div>
-                    <div>Review: <span className="text-gold-500 font-bold">Pending</span></div>
-                  </div>
-                </div>
-
-                {/* Legend Bottom-Left */}
-                <div className="absolute bottom-3 left-3 z-20 bg-navy-900/90 backdrop-blur rounded-lg border border-white/10 px-3 py-2 text-[11px] text-white flex items-center gap-4">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-2 rounded-sm bg-[#7B4FD6]"></span>
-                    <span>New construction (168)</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-2 rounded-sm bg-[#E07B24]"></span>
-                    <span>Demolition (21)</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-2 rounded-sm bg-[#0E9F8E]"></span>
-                    <span>Extension (25)</span>
-                  </div>
-                </div>
+              {/* Real Leaflet Map */}
+              <div className="w-full h-full relative">
+                <InteractiveMap
+                  mode="geoai"
+                  highlightedId={selectedDetection}
+                  onSelectFeature={(id) => setSelectedDetection(Number(id))}
+                  className="w-full h-full"
+                />
               </div>
             </div>
 
@@ -391,7 +329,7 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
               <div className="space-y-3.5">
                 <div>
                   <h3 className="text-[16px] font-bold text-navy-900">
-                    214 changes detected
+                    {filteredDetections.length} candidate changes
                   </h3>
                   <div className="text-[11px] text-secondaryText">
                     Processed against 0.5 m satellite orthomosaics
@@ -402,19 +340,19 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
                 <div className="grid grid-cols-3 gap-2">
                   <div className="p-2 rounded-lg bg-purple-50 border border-purple-200 text-center">
                     <div className="text-[20px] font-bold text-[#7B4FD6] font-mono leading-none">
-                      168
+                      {detections.filter((d) => d.type.includes('New')).length}
                     </div>
                     <div className="text-[10px] text-purple-900 font-semibold mt-1">New</div>
                   </div>
                   <div className="p-2 rounded-lg bg-amber-50 border border-amber-200 text-center">
                     <div className="text-[20px] font-bold text-[#E07B24] font-mono leading-none">
-                      21
+                      {detections.filter((d) => d.type.includes('Demolition')).length}
                     </div>
                     <div className="text-[10px] text-amber-900 font-semibold mt-1">Demolished</div>
                   </div>
                   <div className="p-2 rounded-lg bg-teal-50 border border-teal-200 text-center">
                     <div className="text-[20px] font-bold text-[#0E9F8E] font-mono leading-none">
-                      25
+                      {detections.filter((d) => d.type.includes('Extension')).length}
                     </div>
                     <div className="text-[10px] text-teal-900 font-semibold mt-1">Extensions</div>
                   </div>
@@ -435,12 +373,12 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
                   </div>
                 </div>
 
-                {/* List of 5 Detections */}
+                {/* List of Detections */}
                 <div className="space-y-1.5">
                   <div className="text-[11px] font-bold text-navy-900 uppercase tracking-wider">
                     Detected Candidate Features
                   </div>
-                  {detections.map((det) => (
+                  {filteredDetections.map((det) => (
                     <div
                       key={det.id}
                       onClick={() => setSelectedDetection(det.id)}
@@ -464,10 +402,27 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
                         <div className="font-mono text-primaryText font-bold">
                           {(det.conf * 100).toFixed(0)}%
                         </div>
-                        <div className="text-[10px] text-steel-500">{det.status}</div>
+                        <div
+                          className={`text-[10px] font-semibold ${
+                            det.status === 'Verified' ? 'text-emerald-700' : 'text-amber-700'
+                          }`}
+                        >
+                          {det.status}
+                        </div>
                       </div>
                     </div>
                   ))}
+                </div>
+
+                {/* Verify single item button */}
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    onClick={() => handleVerifyDetection(selectedDetection)}
+                    className="flex-1 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg text-[11px] font-semibold flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Verify Selection</span>
+                  </button>
                 </div>
               </div>
 
@@ -475,26 +430,33 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
               <div className="pt-3 border-t border-border space-y-2">
                 <button
                   onClick={() => onNavigate('S04_PublishingApprovals')}
-                  className="w-full h-[38px] bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[12px] font-semibold flex items-center justify-center gap-2 shadow-sm"
+                  className="w-full h-[38px] bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[12px] font-semibold flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
                 >
                   <FileCheck2 className="w-4 h-4" />
                   <span>Send to Review Queue</span>
                 </button>
                 <div className="grid grid-cols-2 gap-2">
-                  <button className="h-[34px] bg-canvas hover:bg-slate-100 text-primaryText border border-border rounded-lg text-[12px] font-medium">
+                  <button
+                    onClick={() => showToast('Changes published to DMT Cadastral Stage')}
+                    className="h-[34px] bg-canvas hover:bg-slate-100 text-primaryText border border-border rounded-lg text-[12px] font-medium cursor-pointer"
+                  >
                     Publish
                   </button>
-                  <button className="h-[34px] bg-canvas hover:bg-slate-100 text-secondaryText border border-border rounded-lg text-[12px] font-medium">
-                    Export
+                  <button
+                    onClick={handleExportGeoJSON}
+                    className="h-[34px] bg-canvas hover:bg-slate-100 text-secondaryText border border-border rounded-lg text-[12px] font-medium flex items-center justify-center gap-1 cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export</span>
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Model Card Strip (88 px along bottom of map + results) */}
-          <div className="px-8 pb-3">
-            <div className="h-[76px] bg-white rounded-xl border border-border shadow-level-1 px-5 flex items-center justify-between text-[12px]">
+          {/* Model Card Strip */}
+          <div className="px-8 pb-3 flex-shrink-0">
+            <div className="h-[68px] bg-white rounded-xl border border-border shadow-level-1 px-5 flex items-center justify-between text-[12px]">
               <div className="flex items-center gap-6">
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-secondaryText">Registry ID</div>
@@ -502,19 +464,15 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
                 </div>
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-secondaryText">Model Owner</div>
-                  <div className="font-medium text-primaryText">AD-SDI GeoAI Team</div>
+                  <div className="font-medium text-primaryText">AD-SDI GeoAI Lab</div>
                 </div>
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-secondaryText">Training Base</div>
-                  <div className="font-mono text-primaryText">14,200 labelled samples</div>
-                </div>
-                <div>
-                  <div className="text-[10px] uppercase tracking-wider text-secondaryText">Evaluated</div>
-                  <div className="font-mono text-primaryText">30 Aug 2027</div>
+                  <div className="font-mono text-primaryText">14,200 labeled Abu Dhabi samples</div>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-success"></span>
-                  <span className="font-semibold text-emerald-800">Drift: Stable</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span className="font-semibold text-emerald-800">Model Drift: Stable</span>
                 </div>
               </div>
 
@@ -522,10 +480,10 @@ export const S06_GeoAiChangeDetection: React.FC<S06Props> = ({ onNavigate }) => 
                 <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                   Deployment Approved
                 </span>
-                <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
-                  Human Review Required
-                </span>
-                <button className="text-[12px] font-bold text-blue-600 hover:underline">
+                <button
+                  onClick={() => showToast('Opening Model Card MR-B-007 details')}
+                  className="text-[12px] font-bold text-blue-600 hover:underline cursor-pointer"
+                >
                   View Model Card →
                 </button>
               </div>

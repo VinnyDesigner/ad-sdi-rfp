@@ -27,7 +27,13 @@ interface S14Props {
 
 export const S14_SecurityAccessConsole: React.FC<S14Props> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState('Overview');
-  const [expandedRequestId, setExpandedRequestId] = useState<number | null>(1); // Row 1 expanded per spec
+  const [expandedRequestId, setExpandedRequestId] = useState<number | null>(1);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
 
   const complianceBadges = [
     'UAE Data Residency',
@@ -46,7 +52,7 @@ export const S14_SecurityAccessConsole: React.FC<S14Props> = ({ onNavigate }) =>
     { label: 'MFA enforcement', val: '100%', sub: 'Privileged & partner accounts' },
   ];
 
-  const accessRequests = [
+  const [requests, setRequests] = useState([
     {
       id: 1,
       requester: 'Mona K.',
@@ -102,7 +108,7 @@ export const S14_SecurityAccessConsole: React.FC<S14Props> = ({ onNavigate }) =>
       approver: 'Security Board',
       waiting: '4d ago',
     },
-  ];
+  ]);
 
   const rolesMatrix = [
     { role: 'Data Steward', discover: true, view: true, export: true, edit: true, admin: false },
@@ -122,7 +128,15 @@ export const S14_SecurityAccessConsole: React.FC<S14Props> = ({ onNavigate }) =>
   ];
 
   return (
-    <div className="w-full h-screen bg-canvas flex flex-col justify-between overflow-hidden select-none font-sans">
+    <div className="w-full h-screen bg-canvas flex flex-col justify-between overflow-hidden select-none font-sans relative">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="absolute top-20 right-6 z-50 bg-navy-900 text-white px-4 py-2 rounded-xl shadow-2xl border border-white/20 text-[12px] flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* 1. Workspace Top Bar */}
       <HeaderWorkspace currentScreen="S14_SecurityAccessConsole" onNavigate={onNavigate} />
 
@@ -287,7 +301,7 @@ export const S14_SecurityAccessConsole: React.FC<S14Props> = ({ onNavigate }) =>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/60">
-                    {accessRequests.map((req) => {
+                    {requests.map((req) => {
                       const isExpanded = expandedRequestId === req.id;
 
                       return (
@@ -306,10 +320,26 @@ export const S14_SecurityAccessConsole: React.FC<S14Props> = ({ onNavigate }) =>
                             <td className="py-1.5 px-2 font-mono text-secondaryText">{req.waiting}</td>
                             <td className="py-1.5 px-2 text-right">
                               <div className="flex items-center justify-end gap-1.5">
-                                <button className="p-1 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700" title="Approve">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setRequests((prev) => prev.filter((r) => r.id !== req.id));
+                                    showToast(`Access request for ${req.dataset} approved!`);
+                                  }}
+                                  className="p-1 rounded bg-emerald-50 hover:bg-emerald-100 text-emerald-700 cursor-pointer"
+                                  title="Approve"
+                                >
                                   <CheckCircle2 className="w-3.5 h-3.5" />
                                 </button>
-                                <button className="p-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-700" title="Reject">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setRequests((prev) => prev.filter((r) => r.id !== req.id));
+                                    showToast(`Access request for ${req.dataset} rejected`);
+                                  }}
+                                  className="p-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-700 cursor-pointer"
+                                  title="Reject"
+                                >
                                   <XCircle className="w-3.5 h-3.5" />
                                 </button>
                               </div>

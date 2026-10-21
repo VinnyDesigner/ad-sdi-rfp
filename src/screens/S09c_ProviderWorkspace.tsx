@@ -14,6 +14,10 @@ import {
   Users,
   Layers,
   FileCheck2,
+  X,
+  Download,
+  KeyRound,
+  RefreshCw,
 } from 'lucide-react';
 
 interface S09cProps {
@@ -21,7 +25,20 @@ interface S09cProps {
 }
 
 export const S09c_ProviderWorkspace: React.FC<S09cProps> = ({ onNavigate }) => {
-  const providerProducts = [
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState<number>(1);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const [newTitle, setNewTitle] = useState('');
+  const [newVersion, setNewVersion] = useState('v1.0');
+  const [newFormats, setNewFormats] = useState('OGC API, GeoJSON');
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const [providerProducts, setProviderProducts] = useState([
     {
       id: 1,
       name: 'Building Footprints 3D (LOD2)',
@@ -67,7 +84,42 @@ export const S09c_ProviderWorkspace: React.FC<S09cProps> = ({ onNavigate }) => {
       usage: '95,000 calls',
       stageIndex: 1,
     },
-  ];
+  ]);
+
+  const handleCreateProduct = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTitle.trim()) return;
+
+    const newProd = {
+      id: Date.now(),
+      name: newTitle.trim(),
+      version: newVersion.trim(),
+      stage: 'Submitted',
+      subscribers: 0,
+      usage: '0 calls',
+      stageIndex: 0,
+    };
+
+    setProviderProducts([newProd, ...providerProducts]);
+    setModalOpen(false);
+    setNewTitle('');
+    showToast(`Submitted "${newProd.name}" to Sovereign Publishing Gateway!`);
+  };
+
+  const handleExportSettlement = () => {
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      'Product,Version,Publication Stage,Subscribers,Monthly Usage\n' +
+      providerProducts.map((p) => `"${p.name}",${p.version},${p.stage},${p.subscribers},${p.usage}`).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'DMT-Provider-Settlement-Q3-2027.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Downloaded DMT Provider Settlement Report (CSV)');
+  };
 
   const stagesList = ['Submitted', 'Quality check', 'Approval', 'Published'];
 
@@ -105,11 +157,14 @@ export const S09c_ProviderWorkspace: React.FC<S09cProps> = ({ onNavigate }) => {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => onNavigate('S08_MarketplaceCatalogue')}
-                className="px-3.5 py-1.5 rounded-lg border border-border bg-canvas hover:bg-slate-100 text-[12px] font-semibold text-primaryText"
+                className="px-3.5 py-1.5 rounded-lg border border-border bg-canvas hover:bg-slate-100 text-[12px] font-semibold text-primaryText transition-colors cursor-pointer"
               >
                 Marketplace View
               </button>
-              <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[13px] font-semibold flex items-center gap-2 shadow-sm transition-all">
+              <button
+                onClick={() => setModalOpen(true)}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[13px] font-semibold flex items-center gap-2 shadow-sm transition-all cursor-pointer"
+              >
                 <Plus className="w-4 h-4" />
                 <span>Submit New Product</span>
               </button>
@@ -134,11 +189,21 @@ export const S09c_ProviderWorkspace: React.FC<S09cProps> = ({ onNavigate }) => {
                   <tbody className="divide-y divide-border/60">
                     {providerProducts.map((p) => {
                       const isPendingApproval = p.stage === 'Approval — pending';
+                      const isSelected = selectedProductId === p.id;
 
                       return (
-                        <tr key={p.id} className={`hover:bg-canvas/40 ${isPendingApproval ? 'bg-amber-50/20' : ''}`}>
+                        <tr
+                          key={p.id}
+                          onClick={() => setSelectedProductId(p.id)}
+                          className={`cursor-pointer transition-colors ${
+                            isSelected ? 'bg-blue-50/70 font-semibold' : 'hover:bg-canvas/40'
+                          } ${isPendingApproval && !isSelected ? 'bg-amber-50/20' : ''}`}
+                        >
                           <td className="py-3 px-4">
-                            <div className="font-bold text-navy-900 leading-snug">{p.name}</div>
+                            <div className="flex items-center gap-2">
+                              {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />}
+                              <div className="font-bold text-navy-900 leading-snug">{p.name}</div>
+                            </div>
                             {isPendingApproval && (
                               <span className="text-[10px] text-amber-700 font-semibold">
                                 Awaiting DGE Spatial Board Sign-off
@@ -274,8 +339,13 @@ export const S09c_ProviderWorkspace: React.FC<S09cProps> = ({ onNavigate }) => {
               </div>
 
               <div className="pt-3 border-t border-border">
-                <button className="w-full py-2 bg-canvas hover:bg-slate-100 text-primaryText border border-border rounded-lg text-[12px] font-semibold transition-colors">
-                  Export Provider Settlement Report
+                <button
+                  type="button"
+                  onClick={handleExportSettlement}
+                  className="w-full py-2 bg-canvas hover:bg-slate-100 text-primaryText border border-border rounded-lg text-[12px] font-semibold transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Export Provider Settlement Report</span>
                 </button>
               </div>
             </div>
@@ -285,6 +355,95 @@ export const S09c_ProviderWorkspace: React.FC<S09cProps> = ({ onNavigate }) => {
           <MicroFooter />
         </div>
       </div>
+
+      {/* Submit New Product Modal */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <form
+            onSubmit={handleCreateProduct}
+            className="bg-white rounded-2xl shadow-level-4 border border-border max-w-lg w-full p-6 space-y-4"
+          >
+            <div className="flex items-center justify-between pb-2 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Plus className="w-5 h-5 text-blue-600" />
+                <h3 className="font-bold text-[16px] text-navy-900">Submit New Spatial Product</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-steel-400"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-[12px]">
+              <div>
+                <label className="block font-semibold text-primaryText mb-1">Product Title</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Real-Time Public Transit Bus Telemetry"
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  className="w-full h-10 px-3 rounded-lg border border-border text-[12px] text-primaryText focus:outline-none focus:border-blue-600"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-primaryText mb-1">Version</label>
+                  <input
+                    type="text"
+                    required
+                    value={newVersion}
+                    onChange={(e) => setNewVersion(e.target.value)}
+                    className="w-full h-10 px-3 rounded-lg border border-border text-[12px] text-primaryText focus:outline-none focus:border-blue-600 font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-primaryText mb-1">Target Formats</label>
+                  <input
+                    type="text"
+                    required
+                    value={newFormats}
+                    onChange={(e) => setNewFormats(e.target.value)}
+                    className="w-full h-10 px-3 rounded-lg border border-border text-[12px] text-primaryText focus:outline-none focus:border-blue-600"
+                  />
+                </div>
+              </div>
+
+              <p className="text-[11px] text-secondaryText leading-relaxed">
+                By submitting, DMT certifies this data product complies with the Abu Dhabi Data Management Standards and UAE Sovereign Data Residency requirements.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-border">
+              <button
+                type="button"
+                onClick={() => setModalOpen(false)}
+                className="px-4 py-2 rounded-lg border border-border text-[12px] font-medium text-secondaryText hover:bg-slate-50 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[12px] font-bold shadow-sm cursor-pointer"
+              >
+                Submit to Governance Pipeline
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Floating Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-[#0B2545] text-white px-4 py-2.5 rounded-full shadow-2xl border border-gold-500/50 flex items-center gap-2 text-[12px] font-medium animate-in fade-in slide-in-from-bottom-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
     </div>
   );
 };

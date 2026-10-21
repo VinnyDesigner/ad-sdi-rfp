@@ -23,6 +23,12 @@ interface S09bProps {
 
 export const S09b_MyEntitlements: React.FC<S09bProps> = ({ onNavigate }) => {
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 2500);
+  };
 
   const entitlements = [
     {
@@ -83,7 +89,15 @@ export const S09b_MyEntitlements: React.FC<S09bProps> = ({ onNavigate }) => {
   ];
 
   return (
-    <div className="w-full h-screen bg-canvas flex flex-col justify-between overflow-hidden select-none font-sans">
+    <div className="w-full h-screen bg-canvas flex flex-col justify-between overflow-hidden select-none font-sans relative">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="absolute top-20 right-6 z-50 bg-navy-900 text-white px-4 py-2 rounded-xl shadow-2xl border border-white/20 text-[12px] flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* 1. Top Bar */}
       <HeaderWorkspace
         currentScreen="S08_MarketplaceCatalogue"
@@ -169,13 +183,23 @@ export const S09b_MyEntitlements: React.FC<S09bProps> = ({ onNavigate }) => {
                           <div className="flex items-center gap-1.5 font-mono text-[11px] bg-canvas px-2 py-1 rounded border border-border">
                             <span>{item.apiKey}</span>
                             <button
-                              onClick={() => setCopiedKey(item.apiKey)}
-                              className="text-steel-400 hover:text-navy-900"
+                              onClick={() => {
+                                navigator.clipboard?.writeText(`adsdi_live_sec_key_token_${item.id}`);
+                                setCopiedKey(item.apiKey);
+                                showToast(`API key for ${item.product} copied to clipboard`);
+                              }}
+                              className="text-steel-400 hover:text-navy-900 cursor-pointer p-0.5"
                               title="Copy API Key"
                             >
                               <Copy className="w-3 h-3" />
                             </button>
-                            <button className="text-steel-400 hover:text-navy-900" title="Rotate Key">
+                            <button
+                              onClick={() => {
+                                showToast(`API Key for ${item.product} rotated successfully`);
+                              }}
+                              className="text-steel-400 hover:text-navy-900 cursor-pointer p-0.5"
+                              title="Rotate Key"
+                            >
                               <RotateCcw className="w-3 h-3" />
                             </button>
                           </div>
@@ -205,7 +229,10 @@ export const S09b_MyEntitlements: React.FC<S09bProps> = ({ onNavigate }) => {
 
               <div className="p-3 border-t border-border bg-canvas/30 text-[11px] text-secondaryText flex items-center justify-between">
                 <span>All API transactions authenticated via OAuth 2.0 / Mutual TLS</span>
-                <span className="font-semibold text-blue-600 cursor-pointer hover:underline">
+                <span
+                  onClick={() => showToast('Downloading AD-SDI Postman Collection & TypeScript SDK')}
+                  className="font-semibold text-blue-600 cursor-pointer hover:underline"
+                >
                   Download SDK & Postman Collection →
                 </span>
               </div>
@@ -277,7 +304,10 @@ export const S09b_MyEntitlements: React.FC<S09bProps> = ({ onNavigate }) => {
               </div>
 
               <div className="pt-3 border-t border-border">
-                <button className="w-full py-2 bg-canvas hover:bg-slate-100 text-primaryText border border-border rounded-lg text-[12px] font-semibold transition-colors">
+                <button
+                  onClick={() => showToast('Quota expansion request submitted to DMT Clearinghouse for review')}
+                  className="w-full py-2 bg-canvas hover:bg-slate-100 text-primaryText border border-border rounded-lg text-[12px] font-semibold transition-colors cursor-pointer"
+                >
                   Request Quota Increase
                 </button>
               </div>
